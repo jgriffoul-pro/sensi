@@ -31,8 +31,8 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 # CONFIG
 # ─────────────────────────────
 
-MODEL_PATH = Path(__file__).parent / "model_lsf_bilstm.keras"
-METADATA_PATH = Path(__file__).parent / "model_lsf_metadata.json"
+MODEL_PATH = Path(__file__).parent / "models" / "model_lsf_bilstm.keras"
+METADATA_PATH = Path(__file__).parent / "models" / "model_lsf_metadata.json"
 
 # MediaPipe
 mp_holistic = mp.solutions.holistic
