@@ -1,1 +1,11 @@
 raw_data/
+.env
+models/
+__pycache__/
+*.pyc
+*.npy
+*.webm
+*.h5
+*.pt
+*.keras
+.DS_Store
