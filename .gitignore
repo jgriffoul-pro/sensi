@@ -1,1 +1,12 @@
 raw_data/
+.DS_Store
+.python-version
+*.pyc
+__pycache__/
+.omo/
+old/
+
+capture/train_data/
+capture/.DS_Store
+capture/.omo/
+capture/.python-version
