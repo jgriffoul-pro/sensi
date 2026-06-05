@@ -9,3 +9,5 @@ __pycache__/
 *.pt
 *.keras
 .DS_Store
+output/
+data/

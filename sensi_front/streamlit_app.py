@@ -22,17 +22,53 @@ st.set_page_config(
 # ============================================================
 
 st.title("🤝 Sensi")
-st.subheader("Transcription oral de la Langue des Signes Française")
+st.subheader("Transcription orale de la Langue des Signes Française")
 st.divider()
 
 # ============================================================
-# Simulation LSTM — à remplacer par la vraie webcam
+# Mode 1 — Lecture depuis output/sequence.txt (LSTM live)
 # ============================================================
 
-st.markdown("### Signes détectés par le modèle")
+st.markdown("### 🎥 Mode Live — LSTM")
+st.caption("Lance `test_team_live(llm).py` dans un terminal, fais tes signes, puis clique Traduire.")
+
+if st.button("🎤 Traduire la séquence détectée", type="primary"):
+    with st.spinner("Lecture de la séquence et traduction..."):
+        try:
+            response = requests.post(
+                f"{API_URL}/predict/from-sequence",
+                timeout=60
+            )
+
+            if response.status_code == 200:
+                error = response.headers.get("x-error", "")
+                if error:
+                    st.warning("Aucune séquence détectée. Lance le script LSTM et fais des signes.")
+                else:
+                    phrase = response.headers.get("x-phrase", "")
+                    glosses = response.headers.get("x-glosses", "")
+                    st.caption(f"Séquence : {' → '.join(glosses.split())}")
+                    st.success(f"**{phrase}**")
+                    st.audio(response.content, format="audio/mp3")
+            else:
+                st.error(f"Erreur API : {response.status_code}")
+
+        except requests.exceptions.ConnectionError:
+            st.error("Impossible de contacter l'API. Vérifie que uvicorn tourne sur le port 8000.")
+        except requests.exceptions.Timeout:
+            st.error("L'API met trop de temps à répondre.")
+
+st.divider()
+
+# ============================================================
+# Mode 2 — Simulation manuelle (test sans webcam)
+# ============================================================
+
+st.markdown("### 🧪 Mode Test — Simulation LSTM")
+st.caption("Sélectionne des glosses manuellement pour tester le pipeline NLP + TTS.")
 
 glosses_input = st.multiselect(
-    label="Glosses détectées (simulation LSTM)",
+    label="Glosses (simulation)",
     options=[
         "AIDER", "AMELIORER", "AMI", "AUJOURD_HUI", "BONJOUR",
         "COMMUNIQUER", "ENTENDANTS", "CONTENT", "JE_SUIS", "JE_VEUX",
@@ -41,21 +77,13 @@ glosses_input = st.multiselect(
         "TRADUCTION", "VOCAL"
     ],
     default=["BONJOUR", "JE_SUIS", "CONTENT", "PRESENTER", "PROJET"],
-    help="En production, ces glosses seront détectées automatiquement par le modèle LSTM"
+    help="En production, ces glosses viennent automatiquement du modèle LSTM"
 )
 
 if glosses_input:
     st.caption(f"Séquence : {' → '.join(glosses_input)}")
 
-st.divider()
-
-# ============================================================
-# Traduction
-# ============================================================
-
-st.markdown("### Traduction")
-
-if st.button("🎤 Traduire en français", type="primary", disabled=not glosses_input):
+if st.button("🎤 Traduire (simulation)", disabled=not glosses_input):
     with st.spinner("Traduction en cours..."):
         try:
             response = requests.post(
@@ -68,13 +96,11 @@ if st.button("🎤 Traduire en français", type="primary", disabled=not glosses_
                 phrase = response.headers.get("x-phrase", "")
                 st.success(f"**{phrase}**")
                 st.audio(response.content, format="audio/mp3")
-
             else:
                 st.error(f"Erreur API : {response.status_code}")
 
         except requests.exceptions.ConnectionError:
             st.error("Impossible de contacter l'API. Vérifie que uvicorn tourne sur le port 8000.")
-
         except requests.exceptions.Timeout:
             st.error("L'API met trop de temps à répondre.")
 

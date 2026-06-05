@@ -1,27 +1,27 @@
 from fastapi import APIRouter, Response
-# from fastapi import UploadFile, File, HTTPException  # décommenté quand LSTM branché
+# from fastapi import UploadFile, File, HTTPException  # décommenté si webcam dans API
 from app.schemas import PredictRequest, PredictResponse
-# from app.schemas import PredictionResponse           # décommenté quand LSTM branché
+# from app.schemas import PredictionResponse           # décommenté si webcam dans API
 from app.services.pipeline import pipeline_sensi
-# from app.services.preprocessing import (            # décommenté quand LSTM branché
+from app.services.model import get_glosses_from_sequence
+# from app.services.preprocessing import (            # décommenté si webcam dans API
+#     extract_keypoints_from_frame,
 #     extract_keypoints_from_video,
-#     extract_keypoints_from_frame
 # )
-# from app.services.model import predict_sign         # décommenté quand LSTM branché
+# from app.services.model import predict_sign         # décommenté si webcam dans API
 
 router = APIRouter()
 
 
 # ============================================================
-# ROUTES ACTIVES — NLP + TTS (Franck)
+# ROUTES ACTIVES — NLP + TTS
 # ============================================================
 
 @router.post("/predict/sentence")
 async def predict_sentence(request: PredictRequest):
     """
-    Reçoit une liste de glosses prédites par le LSTM
-    et retourne la phrase française.
-    ex: {"glosses": ["BONJOUR", "JE_SUIS", "CONTENT", "PRESENTER", "PROJET"]}
+    Reçoit une liste de glosses et retourne la phrase française.
+    ex: {"glosses": ["BONJOUR", "JE_SUIS", "CONTENT"]}
     """
     phrase, audio = pipeline_sensi(request.glosses)
     return PredictResponse(phrase=phrase)
@@ -30,9 +30,8 @@ async def predict_sentence(request: PredictRequest):
 @router.post("/predict/sentence/audio", response_class=Response)
 async def predict_sentence_audio(request: PredictRequest):
     """
-    Reçoit une liste de glosses prédites par le LSTM
-    et retourne directement le fichier MP3.
-    Le header X-Phrase contient la phrase française générée.
+    Reçoit une liste de glosses et retourne le fichier MP3.
+    La phrase française est disponible dans le header X-Phrase.
     """
     phrase, audio = pipeline_sensi(request.glosses)
     return Response(
@@ -42,9 +41,36 @@ async def predict_sentence_audio(request: PredictRequest):
     )
 
 
+@router.post("/predict/from-sequence", response_class=Response)
+async def predict_from_sequence():
+    """
+    Lit output/sequence.txt écrit par test_team_live(llm).py,
+    génère la phrase française et retourne le MP3.
+    Appelé par Streamlit quand l'utilisateur clique "Traduire".
+    """
+    glosses = get_glosses_from_sequence()
+
+    if not glosses:
+        return Response(
+            content=b"",
+            media_type="audio/mp3",
+            headers={"X-Phrase": "", "X-Error": "Séquence vide"}
+        )
+
+    phrase, audio = pipeline_sensi(glosses)
+    return Response(
+        content=audio,
+        media_type="audio/mp3",
+        headers={
+            "X-Phrase": phrase,
+            "X-Glosses": " ".join(glosses),
+        }
+    )
+
+
 # ============================================================
-# ROUTES EN ATTENTE — LSTM (coéquipiers)
-# À décommenter quand preprocessing.py et model.py sont prêts
+# ROUTES EN ATTENTE — Webcam directe (option future)
+# À décommenter si on intègre la webcam dans l'API
 # ============================================================
 
 # @router.post("/predict/live", response_model=PredictionResponse)
@@ -66,7 +92,7 @@ async def predict_sentence_audio(request: PredictRequest):
 #             detail="Aucune main détectée dans cette frame."
 #         )
 #     sign, confidence = predict_sign(keypoints)
-#     glosses = [sign]                          # à adapter selon format LSTM
+#     glosses = [sign.upper()]
 #     phrase, audio = pipeline_sensi(glosses)
 #     return PredictionResponse(
 #         sign=sign,
@@ -91,10 +117,10 @@ async def predict_sentence_audio(request: PredictRequest):
 #     if keypoints is None:
 #         raise HTTPException(
 #             status_code=422,
-#             detail="Impossible d'extraire les keypoints. Vérifie que la vidéo contient des mains visibles."
+#             detail="Impossible d'extraire les keypoints."
 #         )
 #     sign, confidence = predict_sign(keypoints)
-#     glosses = [sign]                          # à adapter selon format LSTM
+#     glosses = [sign.upper()]
 #     phrase, audio = pipeline_sensi(glosses)
 #     return PredictionResponse(
 #         sign=sign,
