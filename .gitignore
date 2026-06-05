@@ -1,23 +1,2 @@
 raw_data/
-.DS_Store
-.python-version
-*.pyc
-__pycache__/
-.omo/
-.env
-old/
 
-models/
-output/
-data/
-
-capture/train_data/
-capture/.DS_Store
-capture/.omo/
-capture/.python-version
-
-*.npy
-*.webm
-*.h5
-*.pt
-*.keras
