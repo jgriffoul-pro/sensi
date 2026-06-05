@@ -1,0 +1,40 @@
+{
+  "num_classes": 22,
+  "labels": [
+    "aider",
+    "ameliorer",
+    "ami",
+    "aujourd'hui",
+    "bonjour",
+    "communiquer",
+    "entendant",
+    "content",
+    "je_suis",
+    "je_veux",
+    "langue_des_signes",
+    "merci",
+    "outil_pointage",
+    "outil",
+    "presenter",
+    "projet",
+    "sourd_pointage",
+    "sourde",
+    "traduction",
+    "vocal",
+    "",
+    "STOP"
+  ],
+  "input_shape": [
+    60,
+    564
+  ],
+  "max_len": 60,
+  "features": "positions_282 + velocities_282 = 564",
+  "normalization": {
+    "mean": 0.4073558747768402,
+    "std": 0.553167998790741
+  },
+  "architecture": "Bidirectional LSTM (64x2) + Dense(32) + Dense(18)",
+  "augmentation": "mirror",
+  "val_accuracy": 0.932
+}
