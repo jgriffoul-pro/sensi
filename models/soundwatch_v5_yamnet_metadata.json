@@ -1,0 +1,23 @@
+{
+  "approach": "YAMNet embeddings + MLP classifier (transfer learning)",
+  "classes": [
+    "siren",
+    "clock_alarm",
+    "crying_baby",
+    "door_wood_knock",
+    "clapping"
+  ],
+  "idx_to_category": {
+    "0": "siren",
+    "1": "clock_alarm",
+    "2": "crying_baby",
+    "3": "door_wood_knock",
+    "4": "clapping"
+  },
+  "n_classes": 5,
+  "yamnet_url": "https://tfhub.dev/google/yamnet/1",
+  "embedding_dim": 1024,
+  "sample_rate_yamnet": 16000,
+  "best_val_accuracy": 1.0,
+  "notes": "SoundWatch v5 : YAMNet embeddings + MLP, transfer learning"
+}
