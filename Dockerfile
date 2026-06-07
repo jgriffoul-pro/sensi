@@ -1,4 +1,9 @@
+# ============================================================
+# SENSI — Dockerfile
 # Image de base Python 3.10 allégée
+# Déploiement : GCP Cloud Run (port 8080)
+# ============================================================
+
 FROM python:3.10-slim
 
 # Répertoire de travail dans le conteneur
@@ -16,9 +21,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le code de l'application
 COPY app/ ./app/
+COPY config/ ./config/
 
-# Copier les modèles (ajoutés par l'équipe plus tard)
+# Copier les modèles
 COPY models/ ./models/
+
+# Créer le dossier output (nécessaire pour last_phrase.txt)
+RUN mkdir -p output
 
 # Port exposé par Cloud Run
 EXPOSE 8080
