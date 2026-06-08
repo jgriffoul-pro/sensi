@@ -2,169 +2,89 @@ glosses,phrase,n_glosses
 BONJOUR,Bonjour.,1
 MERCI,Merci.,1
 BONJOUR MERCI,Bonjour et merci.,2
-BONJOUR JE_SUIS CONTENT PRESENTER PROJET,"Bonjour, je suis content de vous présenter ce projet.",5
-BONJOUR AUJOURD_HUI PRESENTER PROJET,"Bonjour, aujourd'hui nous allons vous présenter notre projet.",4
-AUJOURD_HUI PRESENTER PROJET LANGUE_DES_SIGNES,"Aujourd'hui, nous vous présentons notre projet de langue des signes.",4
-JE_VEUX PRESENTER PROJET,Je veux vous présenter ce projet.,3
-JE_SUIS CONTENT PRESENTER PROJET,Je suis content de vous présenter ce projet.,4
-BONJOUR AUJOURD_HUI PRESENTER PROJET LANGUE_DES_SIGNES,"Bonjour, aujourd'hui nous vous présentons notre projet en langue des signes.",5
-JE_SUIS CONTENT AUJOURD_HUI PRESENTER PROJET,Je suis content de vous présenter notre projet aujourd'hui.,5
-PROJET OUTIL TRADUCTION LANGUE_DES_SIGNES,Notre projet est un outil de traduction de la langue des signes.,4
-PROJET OUTIL TRADUCTION LANGUE_DES_SIGNES VOCAL,Notre projet est un outil qui traduit la langue des signes en français vocal.,5
-OUTIL_POINTAGE TRADUCTION LANGUE_DES_SIGNES VOCAL,Cet outil traduit la langue des signes en français vocal.,4
-PROJET AIDER COMMUNIQUER SOURD ENTENDANTS,Ce projet aide les personnes malentendantes à communiquer avec les entendants.,5
-PROJET OUTIL AIDER COMMUNIQUER SOURD ENTENDANTS,Notre projet est un outil qui aide les personnes malentendantes à communiquer avec les entendants.,6
-OUTIL_POINTAGE AIDER COMMUNIQUER SOURD ENTENDANTS,Cet outil aide les personnes malentendantes à communiquer avec les entendants.,5
+AUJOURD_HUI BONJOUR MERCI,"Aujourd'hui, bonjour et merci.",3
+BONJOUR PRESENTER PROJET,"Bonjour, nous vous présentons notre projet.",3
+BONJOUR JE_SUIS CONTENT,"Bonjour, je suis content.",3
+BONJOUR JE_SUIS CONTENT PRESENTER,"Bonjour, je suis content de vous présenter.",4
+BONJOUR JE_SUIS CONTENT PRESENTER PROJET,"Bonjour, je suis content de vous présenter notre projet.",5
+BONJOUR AUJOURD_HUI PRESENTER PROJET,"Bonjour, aujourd'hui nous vous présentons notre projet.",4
+BONJOUR AUJOURD_HUI JE_SUIS CONTENT PRESENTER PROJET,"Bonjour, aujourd'hui je suis content de vous présenter notre projet.",6
+AUJOURD_HUI PRESENTER PROJET,"Aujourd'hui, nous vous présentons notre projet.",3
+AUJOURD_HUI JE_SUIS CONTENT PRESENTER PROJET,"Aujourd'hui, je suis content de vous présenter notre projet.",5
+JE_SUIS CONTENT PRESENTER PROJET,Je suis content de vous présenter notre projet.,4
+JE_VEUX PRESENTER PROJET,Je veux vous présenter notre projet.,3
+JE_SUIS CONTENT PRESENTER,Je suis content de vous présenter.,3
+AUJOURD_HUI JE_SUIS CONTENT PRESENTER,"Aujourd'hui, je suis content de vous présenter.",4
+BONJOUR AMI PRESENTER PROJET,"Bonjour, avec mes amis, nous vous présentons notre projet.",4
+BONJOUR JE_SUIS CONTENT AMI PRESENTER PROJET,"Bonjour, je suis content de vous présenter notre projet avec mes amis.",6
+BONJOUR AUJOURD_HUI AMI PRESENTER PROJET,"Bonjour, aujourd'hui, avec mes amis, nous vous présentons notre projet.",5
+BONJOUR AUJOURD_HUI JE_SUIS CONTENT AMI PRESENTER PROJET,"Bonjour, aujourd'hui je suis content de vous présenter notre projet avec mes amis.",7
+AUJOURD_HUI AMI PRESENTER PROJET,"Aujourd'hui, avec mes amis, nous vous présentons notre projet.",4
+JE_SUIS CONTENT AMI PRESENTER PROJET,Je suis content de présenter notre projet avec mes amis.,5
+AMI PRESENTER PROJET,"Avec mes amis, nous vous présentons notre projet.",3
+MERCI AMI PROJET,Merci à mes amis pour ce projet.,3
+JE_SUIS CONTENT AMI PROJET,Je suis content de travailler sur ce projet avec mes amis.,4
+BONJOUR AUJOURD_HUI JE_SUIS CONTENT PRESENTER AMI PROJET,"Bonjour à tous, aujourd'hui je suis content de vous présenter notre projet avec mes amis.",7
+BONJOUR AUJOURD_HUI JE_SUIS CONTENT PRESENTER AMI PROJET OUTIL TRADUCTION VOCAL LANGUE_DES_SIGNES JE_SUIS SOURD JE_VEUX AIDER SOURD ENTENDANTS COMMUNIQUER MERCI,"Bonjour à tous. Aujourd'hui je suis content de vous présenter, avec mes amis, notre projet : un outil pour traduire vocalement la langue des signes. Je suis malentendant, et je veux aider les personnes malentendantes et les personnes entendantes à mieux communiquer ensemble. Merci.",19
+BONJOUR JE_SUIS CONTENT PRESENTER PROJET MERCI,"Bonjour, je suis content de vous présenter notre projet, merci.",6
+AUJOURD_HUI JE_SUIS CONTENT PRESENTER PROJET MERCI,"Aujourd'hui, je suis content de vous présenter notre projet, merci.",6
+MERCI AUJOURD_HUI PRESENTER PROJET,Merci de nous avoir écoutés présenter notre projet aujourd'hui.,4
+JE_SUIS CONTENT PRESENTER PROJET MERCI,"Je suis content de vous avoir présenté notre projet, merci.",5
+BONJOUR AUJOURD_HUI PRESENTER PROJET TRADUCTION LANGUE_DES_SIGNES,"Bonjour, aujourd'hui nous vous présentons notre projet de traduction de la langue des signes.",6
+AUJOURD_HUI PRESENTER PROJET TRADUCTION LANGUE_DES_SIGNES,"Aujourd'hui, nous vous présentons notre projet de traduction de la langue des signes.",5
+BONJOUR JE_SUIS CONTENT PRESENTER PROJET TRADUCTION LANGUE_DES_SIGNES,"Bonjour, je suis content de vous présenter notre projet de traduction de la langue des signes.",7
+AUJOURD_HUI AMI PRESENTER PROJET TRADUCTION LANGUE_DES_SIGNES,"Aujourd'hui, avec mes amis, nous vous présentons notre projet de traduction de la langue des signes.",6
+OUTIL TRADUCTION LANGUE_DES_SIGNES,Cet outil traduit la langue des signes.,3
+OUTIL TRADUCTION VOCAL LANGUE_DES_SIGNES,Cet outil traduit vocalement la langue des signes.,4
 OUTIL_POINTAGE TRADUCTION LANGUE_DES_SIGNES,Cet outil traduit la langue des signes.,3
-OUTIL_POINTAGE AIDER COMMUNIQUER,Cet outil aide à communiquer.,3
-PROJET AMELIORER COMMUNIQUER SOURD ENTENDANTS,Notre projet améliore la communication entre les personnes malentendantes et les entendants.,5
-OUTIL_POINTAGE AMELIORER TRADUCTION LANGUE_DES_SIGNES,Cet outil améliore la traduction de la langue des signes.,4
-JE_VEUX AMELIORER TRADUCTION VOCAL,Je veux améliorer la traduction vocale.,4
-TRADUCTION LANGUE_DES_SIGNES VOCAL,La traduction de la langue des signes est vocale.,3
+OUTIL_POINTAGE TRADUCTION VOCAL LANGUE_DES_SIGNES,Cet outil traduit vocalement la langue des signes.,4
+OUTIL_POINTAGE TRADUCTION LANGUE_DES_SIGNES VOCAL,Cet outil traduit la langue des signes en français vocal.,4
+PROJET OUTIL TRADUCTION LANGUE_DES_SIGNES,Notre projet est un outil de traduction de la langue des signes.,4
+PROJET OUTIL TRADUCTION VOCAL LANGUE_DES_SIGNES,Notre projet est un outil qui traduit vocalement la langue des signes.,5
+PROJET OUTIL TRADUCTION LANGUE_DES_SIGNES VOCAL,Notre projet est un outil qui traduit la langue des signes en français vocal.,5
+BONJOUR PROJET OUTIL TRADUCTION LANGUE_DES_SIGNES,"Bonjour, notre projet est un outil de traduction de la langue des signes.",5
+BONJOUR PROJET OUTIL TRADUCTION VOCAL LANGUE_DES_SIGNES,"Bonjour, notre projet est un outil qui traduit vocalement la langue des signes.",6
+AUJOURD_HUI PROJET OUTIL TRADUCTION LANGUE_DES_SIGNES,"Aujourd'hui, notre projet est un outil de traduction de la langue des signes.",5
+AUJOURD_HUI OUTIL_POINTAGE TRADUCTION VOCAL LANGUE_DES_SIGNES,"Aujourd'hui, cet outil traduit vocalement la langue des signes.",5
+BONJOUR OUTIL_POINTAGE TRADUCTION VOCAL LANGUE_DES_SIGNES,"Bonjour, cet outil traduit vocalement la langue des signes.",5
+PROJET OUTIL TRADUCTION LANGUE_DES_SIGNES MERCI,"Notre projet est un outil de traduction de la langue des signes, merci.",5
+OUTIL_POINTAGE TRADUCTION VOCAL LANGUE_DES_SIGNES MERCI,"Cet outil traduit vocalement la langue des signes, merci.",5
 JE_VEUX TRADUCTION LANGUE_DES_SIGNES,Je veux traduire la langue des signes.,3
 LANGUE_DES_SIGNES TRADUCTION VOCAL,La langue des signes est traduite vocalement.,3
-PROJET TRADUCTION VOCAL SOURD ENTENDANTS,Notre projet traduit vocalement les signes des personnes malentendantes pour les entendants.,5
-JE_VEUX COMMUNIQUER VOCAL ENTENDANTS,Je veux communiquer vocalement avec les entendants.,4
-OUTIL_POINTAGE TRADUCTION VOCAL LANGUE_DES_SIGNES,Cet outil traduit vocalement la langue des signes.,4
-LANGUE_DES_SIGNES OUTIL COMMUNIQUER,La langue des signes est un outil pour communiquer.,3
-JE_VEUX COMMUNIQUER ENTENDANTS,Je veux communiquer avec les entendants.,3
-LANGUE_DES_SIGNES COMMUNIQUER SOURD ENTENDANTS,La langue des signes permet aux personnes malentendantes de communiquer avec les entendants.,4
-JE_SUIS SOURD COMMUNIQUER LANGUE_DES_SIGNES,Je suis malentendant(e) et je communique en langue des signes.,4
-JE_SUIS SOURD JE_VEUX COMMUNIQUER ENTENDANTS,Je suis malentendant(e) et je veux communiquer avec les entendants.,5
-JE_VEUX AIDER SOURD COMMUNIQUER ENTENDANTS,Je veux aider les personnes malentendantes à communiquer avec les entendants.,5
-JE_VEUX AIDER ENTENDANTS COMMUNIQUER SOURD,Je veux aider les entendants à communiquer avec les personnes malentendantes.,5
-PROJET AIDER SOURD,Ce projet aide les personnes malentendantes.,3
+PROJET TRADUCTION VOCAL SOURD ENTENDANTS,Notre projet traduit vocalement la langue des signes des personnes malentendantes pour les personnes entendantes.,5
+BONJOUR JE_VEUX TRADUCTION LANGUE_DES_SIGNES,"Bonjour, je veux traduire la langue des signes.",4
+AUJOURD_HUI LANGUE_DES_SIGNES TRADUCTION VOCAL,"Aujourd'hui, la langue des signes est traduite vocalement.",4
+PROJET AMELIORER COMMUNIQUER SOURD ENTENDANTS,Notre projet améliore la communication entre les personnes malentendantes et les personnes entendantes.,5
+OUTIL_POINTAGE AMELIORER TRADUCTION LANGUE_DES_SIGNES,Cet outil améliore la traduction de la langue des signes.,4
+JE_VEUX AMELIORER COMMUNIQUER SOURD ENTENDANTS,Je veux améliorer la communication entre les personnes malentendantes et les personnes entendantes.,5
+BONJOUR PROJET AMELIORER COMMUNIQUER SOURD ENTENDANTS,"Bonjour, notre projet améliore la communication entre les personnes malentendantes et les personnes entendantes.",6
+AUJOURD_HUI PROJET AMELIORER COMMUNIQUER SOURD ENTENDANTS,"Aujourd'hui, notre projet améliore la communication entre les personnes malentendantes et les personnes entendantes.",6
+PROJET AIDER COMMUNIQUER SOURD ENTENDANTS,Notre projet aide les personnes malentendantes à communiquer avec les personnes entendantes.,5
+OUTIL_POINTAGE AIDER COMMUNIQUER SOURD ENTENDANTS,Cet outil aide les personnes malentendantes à communiquer avec les personnes entendantes.,5
+OUTIL_POINTAGE AIDER COMMUNIQUER,Cet outil aide à communiquer.,3
 OUTIL_POINTAGE AIDER SOURD COMMUNIQUER,Cet outil aide les personnes malentendantes à communiquer.,4
+LANGUE_DES_SIGNES COMMUNIQUER SOURD ENTENDANTS,La langue des signes permet aux personnes malentendantes de communiquer avec les personnes entendantes.,4
+BONJOUR PROJET AIDER COMMUNIQUER SOURD ENTENDANTS,"Bonjour, notre projet aide les personnes malentendantes à communiquer avec les personnes entendantes.",6
+AUJOURD_HUI PROJET AIDER COMMUNIQUER SOURD ENTENDANTS,"Aujourd'hui, notre projet aide les personnes malentendantes à communiquer avec les personnes entendantes.",6
+PROJET AIDER COMMUNIQUER SOURD ENTENDANTS MERCI,"Notre projet aide les personnes malentendantes à communiquer avec les personnes entendantes, merci.",6
+BONJOUR OUTIL_POINTAGE AIDER COMMUNIQUER SOURD ENTENDANTS,"Bonjour, cet outil aide les personnes malentendantes à communiquer avec les personnes entendantes.",6
+PROJET AIDER SOURD,Notre projet aide les personnes malentendantes.,3
+PROJET OUTIL AIDER COMMUNIQUER SOURD ENTENDANTS,Notre projet est un outil qui aide les personnes malentendantes à communiquer avec les personnes entendantes.,6
+JE_SUIS SOURD COMMUNIQUER LANGUE_DES_SIGNES,Je suis malentendant(e) et je communique en langue des signes.,4
+JE_SUIS SOURD JE_VEUX COMMUNIQUER ENTENDANTS,Je suis malentendant(e) et je veux communiquer avec les personnes entendantes.,5
+JE_VEUX AIDER SOURD COMMUNIQUER ENTENDANTS,Je veux aider les personnes malentendantes à communiquer avec les personnes entendantes.,5
+JE_VEUX AIDER ENTENDANTS COMMUNIQUER SOURD,Je veux aider les personnes entendantes à communiquer avec les personnes malentendantes.,5
+JE_VEUX COMMUNIQUER ENTENDANTS,Je veux communiquer avec les personnes entendantes.,3
+BONJOUR JE_SUIS SOURD COMMUNIQUER LANGUE_DES_SIGNES,"Bonjour, je suis malentendant(e) et je communique en langue des signes.",5
+BONJOUR JE_SUIS SOURD JE_VEUX COMMUNIQUER ENTENDANTS,"Bonjour, je suis malentendant(e) et je veux communiquer avec les personnes entendantes.",6
+BONJOUR JE_VEUX AIDER SOURD COMMUNIQUER ENTENDANTS,"Bonjour, je veux aider les personnes malentendantes à communiquer avec les personnes entendantes.",6
+JE_SUIS SOURD JE_VEUX AIDER SOURD ENTENDANTS COMMUNIQUER,Je suis malentendant et je veux aider les personnes malentendantes et les personnes entendantes à mieux communiquer ensemble.,7
+JE_VEUX AIDER SOURD COMMUNIQUER ENTENDANTS MERCI,"Je veux aider les personnes malentendantes à communiquer avec les personnes entendantes, merci.",6
 SOURD_POINTAGE JE_VEUX COMMUNIQUER,Cette personne malentendante veut communiquer.,3
-SOURD_POINTAGE AMI ENTENDANTS,Cette personne malentendante a des amis entendants.,3
 SOURD_POINTAGE COMMUNIQUER LANGUE_DES_SIGNES,Cette personne malentendante communique en langue des signes.,3
 SOURD_POINTAGE TRADUCTION VOCAL,Cette personne malentendante utilise la traduction vocale.,3
-AMI ENTENDANTS COMMUNIQUER,Mes amis entendants communiquent avec moi.,3
-JE_SUIS CONTENT AMI,Je suis content d'avoir des amis.,3
-MERCI AMI AIDER PROJET,Merci à mes amis qui ont aidé ce projet.,4
-MERCI AUJOURD_HUI PRESENTER PROJET,Merci de nous avoir écoutés présenter notre projet aujourd'hui.,4
-JE_SUIS CONTENT COMMUNIQUER LANGUE_DES_SIGNES,Je suis content de communiquer en langue des signes.,4
-AUJOURD_HUI JE_SUIS CONTENT PRESENTER,Aujourd'hui je suis content de vous présenter.,4
-MERCI CONTENT PRESENTER PROJET,"Merci, je suis content d'avoir présenté ce projet.",4
-AUJOURD_HUI BONJOUR MERCI,"Aujourd'hui, bonjour et merci.",3
-BONJOUR JE_SUIS CONTENT PRESENTER PROJET MERCI,"Bonjour, je suis content de vous présenter ce projet, merci.",6
-AUJOURD_HUI BONJOUR JE_SUIS CONTENT PRESENTER PROJET,"Aujourd'hui, bonjour, je suis content de vous présenter ce projet.",6
-BONJOUR AUJOURD_HUI PRESENTER PROJET MERCI,"Bonjour, aujourd'hui nous allons vous présenter notre projet, merci.",5
-AUJOURD_HUI PRESENTER PROJET LANGUE_DES_SIGNES MERCI,"Aujourd'hui, nous vous présentons notre projet de langue des signes, merci.",5
-BONJOUR JE_VEUX PRESENTER PROJET,"Bonjour, je veux vous présenter ce projet.",4
-JE_VEUX PRESENTER PROJET MERCI,"Je veux vous présenter ce projet, merci.",4
-AUJOURD_HUI JE_VEUX PRESENTER PROJET,"Aujourd'hui, je veux vous présenter ce projet.",4
-JE_SUIS CONTENT PRESENTER PROJET MERCI,"Je suis content de vous présenter ce projet, merci.",5
-AUJOURD_HUI JE_SUIS CONTENT PRESENTER PROJET,"Aujourd'hui, je suis content de vous présenter ce projet.",5
-BONJOUR AUJOURD_HUI PRESENTER PROJET LANGUE_DES_SIGNES MERCI,"Bonjour, aujourd'hui nous vous présentons notre projet en langue des signes, merci.",6
-BONJOUR JE_SUIS CONTENT AUJOURD_HUI PRESENTER PROJET,"Bonjour, je suis content de vous présenter notre projet aujourd'hui.",6
-JE_SUIS CONTENT AUJOURD_HUI PRESENTER PROJET MERCI,"Je suis content de vous présenter notre projet aujourd'hui, merci.",6
-BONJOUR PROJET OUTIL TRADUCTION LANGUE_DES_SIGNES,"Bonjour, notre projet est un outil de traduction de la langue des signes.",5
-PROJET OUTIL TRADUCTION LANGUE_DES_SIGNES MERCI,"Notre projet est un outil de traduction de la langue des signes, merci.",5
-AUJOURD_HUI PROJET OUTIL TRADUCTION LANGUE_DES_SIGNES,"Aujourd'hui, notre projet est un outil de traduction de la langue des signes.",5
-BONJOUR PROJET OUTIL TRADUCTION LANGUE_DES_SIGNES VOCAL,"Bonjour, notre projet est un outil qui traduit la langue des signes en français vocal.",6
-PROJET OUTIL TRADUCTION LANGUE_DES_SIGNES VOCAL MERCI,"Notre projet est un outil qui traduit la langue des signes en français vocal, merci.",6
-AUJOURD_HUI PROJET OUTIL TRADUCTION LANGUE_DES_SIGNES VOCAL,"Aujourd'hui, notre projet est un outil qui traduit la langue des signes en français vocal.",6
-BONJOUR OUTIL_POINTAGE TRADUCTION LANGUE_DES_SIGNES VOCAL,"Bonjour, cet outil traduit la langue des signes en français vocal.",5
-OUTIL_POINTAGE TRADUCTION LANGUE_DES_SIGNES VOCAL MERCI,"Cet outil traduit la langue des signes en français vocal, merci.",5
-AUJOURD_HUI OUTIL_POINTAGE TRADUCTION LANGUE_DES_SIGNES VOCAL,"Aujourd'hui, cet outil traduit la langue des signes en français vocal.",5
-BONJOUR PROJET AIDER COMMUNIQUER SOURD ENTENDANTS,"Bonjour, ce projet aide les personnes malentendantes à communiquer avec les entendants.",6
-PROJET AIDER COMMUNIQUER SOURD ENTENDANTS MERCI,"Ce projet aide les personnes malentendantes à communiquer avec les entendants, merci.",6
-AUJOURD_HUI PROJET AIDER COMMUNIQUER SOURD ENTENDANTS,"Aujourd'hui, ce projet aide les personnes malentendantes à communiquer avec les entendants.",6
-BONJOUR PROJET OUTIL AIDER COMMUNIQUER SOURD ENTENDANTS,"Bonjour, notre projet est un outil qui aide les personnes malentendantes à communiquer avec les entendants.",7
-PROJET OUTIL AIDER COMMUNIQUER SOURD ENTENDANTS MERCI,"Notre projet est un outil qui aide les personnes malentendantes à communiquer avec les entendants, merci.",7
-AUJOURD_HUI PROJET OUTIL AIDER COMMUNIQUER SOURD ENTENDANTS,"Aujourd'hui, notre projet est un outil qui aide les personnes malentendantes à communiquer avec les entendants.",7
-BONJOUR OUTIL_POINTAGE AIDER COMMUNIQUER SOURD ENTENDANTS,"Bonjour, cet outil aide les personnes malentendantes à communiquer avec les entendants.",6
-OUTIL_POINTAGE AIDER COMMUNIQUER SOURD ENTENDANTS MERCI,"Cet outil aide les personnes malentendantes à communiquer avec les entendants, merci.",6
-AUJOURD_HUI OUTIL_POINTAGE AIDER COMMUNIQUER SOURD ENTENDANTS,"Aujourd'hui, cet outil aide les personnes malentendantes à communiquer avec les entendants.",6
-BONJOUR OUTIL_POINTAGE TRADUCTION LANGUE_DES_SIGNES,"Bonjour, cet outil traduit la langue des signes.",4
-OUTIL_POINTAGE TRADUCTION LANGUE_DES_SIGNES MERCI,"Cet outil traduit la langue des signes, merci.",4
-AUJOURD_HUI OUTIL_POINTAGE TRADUCTION LANGUE_DES_SIGNES,"Aujourd'hui, cet outil traduit la langue des signes.",4
-BONJOUR OUTIL_POINTAGE AIDER COMMUNIQUER,"Bonjour, cet outil aide à communiquer.",4
-OUTIL_POINTAGE AIDER COMMUNIQUER MERCI,"Cet outil aide à communiquer, merci.",4
-AUJOURD_HUI OUTIL_POINTAGE AIDER COMMUNIQUER,"Aujourd'hui, cet outil aide à communiquer.",4
-BONJOUR PROJET AMELIORER COMMUNIQUER SOURD ENTENDANTS,"Bonjour, notre projet améliore la communication entre les personnes malentendantes et les entendants.",6
-PROJET AMELIORER COMMUNIQUER SOURD ENTENDANTS MERCI,"Notre projet améliore la communication entre les personnes malentendantes et les entendants, merci.",6
-AUJOURD_HUI PROJET AMELIORER COMMUNIQUER SOURD ENTENDANTS,"Aujourd'hui, notre projet améliore la communication entre les personnes malentendantes et les entendants.",6
-BONJOUR OUTIL_POINTAGE AMELIORER TRADUCTION LANGUE_DES_SIGNES,"Bonjour, cet outil améliore la traduction de la langue des signes.",5
-OUTIL_POINTAGE AMELIORER TRADUCTION LANGUE_DES_SIGNES MERCI,"Cet outil améliore la traduction de la langue des signes, merci.",5
-AUJOURD_HUI OUTIL_POINTAGE AMELIORER TRADUCTION LANGUE_DES_SIGNES,"Aujourd'hui, cet outil améliore la traduction de la langue des signes.",5
-BONJOUR JE_VEUX AMELIORER TRADUCTION VOCAL,"Bonjour, je veux améliorer la traduction vocale.",5
-JE_VEUX AMELIORER TRADUCTION VOCAL MERCI,"Je veux améliorer la traduction vocale, merci.",5
-AUJOURD_HUI JE_VEUX AMELIORER TRADUCTION VOCAL,"Aujourd'hui, je veux améliorer la traduction vocale.",5
-BONJOUR TRADUCTION LANGUE_DES_SIGNES VOCAL,"Bonjour, la traduction de la langue des signes est vocale.",4
-TRADUCTION LANGUE_DES_SIGNES VOCAL MERCI,"La traduction de la langue des signes est vocale, merci.",4
-AUJOURD_HUI TRADUCTION LANGUE_DES_SIGNES VOCAL,"Aujourd'hui, la traduction de la langue des signes est vocale.",4
-BONJOUR JE_VEUX TRADUCTION LANGUE_DES_SIGNES,"Bonjour, je veux traduire la langue des signes.",4
-JE_VEUX TRADUCTION LANGUE_DES_SIGNES MERCI,"Je veux traduire la langue des signes, merci.",4
-AUJOURD_HUI JE_VEUX TRADUCTION LANGUE_DES_SIGNES,"Aujourd'hui, je veux traduire la langue des signes.",4
-BONJOUR LANGUE_DES_SIGNES TRADUCTION VOCAL,"Bonjour, la langue des signes est traduite vocalement.",4
-LANGUE_DES_SIGNES TRADUCTION VOCAL MERCI,"La langue des signes est traduite vocalement, merci.",4
-AUJOURD_HUI LANGUE_DES_SIGNES TRADUCTION VOCAL,"Aujourd'hui, la langue des signes est traduite vocalement.",4
-BONJOUR PROJET TRADUCTION VOCAL SOURD ENTENDANTS,"Bonjour, notre projet traduit vocalement les signes des personnes malentendantes pour les entendants.",6
-PROJET TRADUCTION VOCAL SOURD ENTENDANTS MERCI,"Notre projet traduit vocalement les signes des personnes malentendantes pour les entendants, merci.",6
-AUJOURD_HUI PROJET TRADUCTION VOCAL SOURD ENTENDANTS,"Aujourd'hui, notre projet traduit vocalement les signes des personnes malentendantes pour les entendants.",6
-BONJOUR JE_VEUX COMMUNIQUER VOCAL ENTENDANTS,"Bonjour, je veux communiquer vocalement avec les entendants.",5
-JE_VEUX COMMUNIQUER VOCAL ENTENDANTS MERCI,"Je veux communiquer vocalement avec les entendants, merci.",5
-AUJOURD_HUI JE_VEUX COMMUNIQUER VOCAL ENTENDANTS,"Aujourd'hui, je veux communiquer vocalement avec les entendants.",5
-BONJOUR OUTIL_POINTAGE TRADUCTION VOCAL LANGUE_DES_SIGNES,"Bonjour, cet outil traduit vocalement la langue des signes.",5
-OUTIL_POINTAGE TRADUCTION VOCAL LANGUE_DES_SIGNES MERCI,"Cet outil traduit vocalement la langue des signes, merci.",5
-AUJOURD_HUI OUTIL_POINTAGE TRADUCTION VOCAL LANGUE_DES_SIGNES,"Aujourd'hui, cet outil traduit vocalement la langue des signes.",5
-BONJOUR LANGUE_DES_SIGNES OUTIL COMMUNIQUER,"Bonjour, la langue des signes est un outil pour communiquer.",4
-LANGUE_DES_SIGNES OUTIL COMMUNIQUER MERCI,"La langue des signes est un outil pour communiquer, merci.",4
-AUJOURD_HUI LANGUE_DES_SIGNES OUTIL COMMUNIQUER,"Aujourd'hui, la langue des signes est un outil pour communiquer.",4
-BONJOUR JE_VEUX COMMUNIQUER ENTENDANTS,"Bonjour, je veux communiquer avec les entendants.",4
-JE_VEUX COMMUNIQUER ENTENDANTS MERCI,"Je veux communiquer avec les entendants, merci.",4
-AUJOURD_HUI JE_VEUX COMMUNIQUER ENTENDANTS,"Aujourd'hui, je veux communiquer avec les entendants.",4
-BONJOUR LANGUE_DES_SIGNES COMMUNIQUER SOURD ENTENDANTS,"Bonjour, la langue des signes permet aux personnes malentendantes de communiquer avec les entendants.",5
-LANGUE_DES_SIGNES COMMUNIQUER SOURD ENTENDANTS MERCI,"La langue des signes permet aux personnes malentendantes de communiquer avec les entendants, merci.",5
-AUJOURD_HUI LANGUE_DES_SIGNES COMMUNIQUER SOURD ENTENDANTS,"Aujourd'hui, la langue des signes permet aux personnes malentendantes de communiquer avec les entendants.",5
-BONJOUR JE_SUIS SOURD COMMUNIQUER LANGUE_DES_SIGNES,"Bonjour, je suis malentendant(e) et je communique en langue des signes.",5
-JE_SUIS SOURD COMMUNIQUER LANGUE_DES_SIGNES MERCI,"Je suis malentendant(e) et je communique en langue des signes, merci.",5
-AUJOURD_HUI JE_SUIS SOURD COMMUNIQUER LANGUE_DES_SIGNES,"Aujourd'hui, je suis malentendant(e) et je communique en langue des signes.",5
-BONJOUR JE_SUIS SOURD JE_VEUX COMMUNIQUER ENTENDANTS,"Bonjour, je suis malentendant(e) et je veux communiquer avec les entendants.",6
-JE_SUIS SOURD JE_VEUX COMMUNIQUER ENTENDANTS MERCI,"Je suis malentendant(e) et je veux communiquer avec les entendants, merci.",6
-AUJOURD_HUI JE_SUIS SOURD JE_VEUX COMMUNIQUER ENTENDANTS,"Aujourd'hui, je suis malentendant(e) et je veux communiquer avec les entendants.",6
-BONJOUR JE_VEUX AIDER SOURD COMMUNIQUER ENTENDANTS,"Bonjour, je veux aider les personnes malentendantes à communiquer avec les entendants.",6
-JE_VEUX AIDER SOURD COMMUNIQUER ENTENDANTS MERCI,"Je veux aider les personnes malentendantes à communiquer avec les entendants, merci.",6
-AUJOURD_HUI JE_VEUX AIDER SOURD COMMUNIQUER ENTENDANTS,"Aujourd'hui, je veux aider les personnes malentendantes à communiquer avec les entendants.",6
-BONJOUR JE_VEUX AIDER ENTENDANTS COMMUNIQUER SOURD,"Bonjour, je veux aider les entendants à communiquer avec les personnes malentendantes.",6
-JE_VEUX AIDER ENTENDANTS COMMUNIQUER SOURD MERCI,"Je veux aider les entendants à communiquer avec les personnes malentendantes, merci.",6
-AUJOURD_HUI JE_VEUX AIDER ENTENDANTS COMMUNIQUER SOURD,"Aujourd'hui, je veux aider les entendants à communiquer avec les personnes malentendantes.",6
-BONJOUR PROJET AIDER SOURD,"Bonjour, ce projet aide les personnes malentendantes.",4
-PROJET AIDER SOURD MERCI,"Ce projet aide les personnes malentendantes, merci.",4
-AUJOURD_HUI PROJET AIDER SOURD,"Aujourd'hui, ce projet aide les personnes malentendantes.",4
-BONJOUR OUTIL_POINTAGE AIDER SOURD COMMUNIQUER,"Bonjour, cet outil aide les personnes malentendantes à communiquer.",5
-OUTIL_POINTAGE AIDER SOURD COMMUNIQUER MERCI,"Cet outil aide les personnes malentendantes à communiquer, merci.",5
-AUJOURD_HUI OUTIL_POINTAGE AIDER SOURD COMMUNIQUER,"Aujourd'hui, cet outil aide les personnes malentendantes à communiquer.",5
 BONJOUR SOURD_POINTAGE JE_VEUX COMMUNIQUER,"Bonjour, cette personne malentendante veut communiquer.",4
 SOURD_POINTAGE JE_VEUX COMMUNIQUER MERCI,"Cette personne malentendante veut communiquer, merci.",4
-AUJOURD_HUI SOURD_POINTAGE JE_VEUX COMMUNIQUER,"Aujourd'hui, cette personne malentendante veut communiquer.",4
-BONJOUR SOURD_POINTAGE AMI ENTENDANTS,"Bonjour, cette personne malentendante a des amis entendants.",4
-SOURD_POINTAGE AMI ENTENDANTS MERCI,"Cette personne malentendante a des amis entendants, merci.",4
-AUJOURD_HUI SOURD_POINTAGE AMI ENTENDANTS,"Aujourd'hui, cette personne malentendante a des amis entendants.",4
-BONJOUR SOURD_POINTAGE COMMUNIQUER LANGUE_DES_SIGNES,"Bonjour, cette personne malentendante communique en langue des signes.",4
-SOURD_POINTAGE COMMUNIQUER LANGUE_DES_SIGNES MERCI,"Cette personne malentendante communique en langue des signes, merci.",4
-AUJOURD_HUI SOURD_POINTAGE COMMUNIQUER LANGUE_DES_SIGNES,"Aujourd'hui, cette personne malentendante communique en langue des signes.",4
-BONJOUR SOURD_POINTAGE TRADUCTION VOCAL,"Bonjour, cette personne malentendante utilise la traduction vocale.",4
-SOURD_POINTAGE TRADUCTION VOCAL MERCI,"Cette personne malentendante utilise la traduction vocale, merci.",4
-AUJOURD_HUI SOURD_POINTAGE TRADUCTION VOCAL,"Aujourd'hui, cette personne malentendante utilise la traduction vocale.",4
-BONJOUR AMI ENTENDANTS COMMUNIQUER,"Bonjour, mes amis entendants communiquent avec moi.",4
-AMI ENTENDANTS COMMUNIQUER MERCI,"Mes amis entendants communiquent avec moi, merci.",4
-AUJOURD_HUI AMI ENTENDANTS COMMUNIQUER,"Aujourd'hui, mes amis entendants communiquent avec moi.",4
-BONJOUR JE_SUIS CONTENT AMI,"Bonjour, je suis content d'avoir des amis.",4
-JE_SUIS CONTENT AMI MERCI,"Je suis content d'avoir des amis, merci.",4
-AUJOURD_HUI JE_SUIS CONTENT AMI,"Aujourd'hui, je suis content d'avoir des amis.",4
-BONJOUR MERCI AMI AIDER PROJET,"Bonjour, merci à mes amis qui ont aidé ce projet.",5
-MERCI AMI AIDER PROJET MERCI,"Merci à mes amis qui ont aidé ce projet, merci.",5
-AUJOURD_HUI MERCI AMI AIDER PROJET,"Aujourd'hui, merci à mes amis qui ont aidé ce projet.",5
-BONJOUR MERCI AUJOURD_HUI PRESENTER PROJET,"Bonjour, merci de nous avoir écoutés présenter notre projet aujourd'hui.",5
-MERCI AUJOURD_HUI PRESENTER PROJET MERCI,"Merci de nous avoir écoutés présenter notre projet aujourd'hui, merci.",5
-BONJOUR JE_SUIS CONTENT COMMUNIQUER LANGUE_DES_SIGNES,"Bonjour, je suis content de communiquer en langue des signes.",5
-JE_SUIS CONTENT COMMUNIQUER LANGUE_DES_SIGNES MERCI,"Je suis content de communiquer en langue des signes, merci.",5
-AUJOURD_HUI JE_SUIS CONTENT COMMUNIQUER LANGUE_DES_SIGNES,"Aujourd'hui, je suis content de communiquer en langue des signes.",5
-BONJOUR AUJOURD_HUI JE_SUIS CONTENT PRESENTER,"Bonjour, aujourd'hui je suis content de vous présenter.",5
-AUJOURD_HUI JE_SUIS CONTENT PRESENTER MERCI,"Aujourd'hui je suis content de vous présenter, merci.",5
-BONJOUR MERCI CONTENT PRESENTER PROJET,"Bonjour, merci, je suis content d'avoir présenté ce projet.",5
-MERCI CONTENT PRESENTER PROJET MERCI,"Merci, je suis content d'avoir présenté ce projet, merci.",5
-AUJOURD_HUI MERCI CONTENT PRESENTER PROJET,"Aujourd'hui, merci, je suis content d'avoir présenté ce projet.",5
+JE_SUIS SOURD COMMUNIQUER LANGUE_DES_SIGNES MERCI,"Je suis malentendant(e) et je communique en langue des signes, merci.",5
+BONJOUR PROJET TRADUCTION LANGUE_DES_SIGNES MERCI,"Bonjour, notre projet traduit la langue des signes, merci.",5
+AUJOURD_HUI PROJET AMELIORER COMMUNIQUER SOURD ENTENDANTS MERCI,"Aujourd'hui, notre projet améliore la communication entre les personnes malentendantes et les personnes entendantes, merci.",7
