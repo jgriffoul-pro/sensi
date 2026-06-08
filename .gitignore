@@ -1,3 +1,7 @@
+# ============================================================
+# SENSI — .gitignore
+# ============================================================
+
 # Environnement
 .env
 .python-version
@@ -22,13 +26,14 @@ data/
 output/
 capture/train_data/
 
-# Fichiers binaires lourds — gérés par Git LFS
+# Modèles lourds — partagés via AirDrop
 *.safetensors
 *.keras
 *.h5
 *.pt
 *.npy
 *.webm
+models/barthez_sensi_final/sentencepiece.bpe.model
 
 # Environnements virtuels
 .venv/
