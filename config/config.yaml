@@ -1,0 +1,128 @@
+# ============================================================
+# SENSI — Configuration centrale
+# Tous les paramètres du projet sont définis ici
+# ============================================================
+
+
+# ============================================================
+# CHEMINS
+# ============================================================
+paths:
+  # Modèles
+  barthez_dir: models/barthez_sensi_final
+  lstm_model: models/sensi_team_v6.keras
+  lstm_metadata: models/sensi_team_v6_metadata.json
+
+  # Données
+  nlp_dataset_csv: data/nlp/sensi_dataset.csv
+  nlp_dataset_json: data/nlp/sensi_dataset.json
+
+  # Output LSTM live
+  sequence_txt: output/sequence.txt
+  last_phrase_txt: output/last_phrase.txt
+  phrases_log: output/phrases.log
+
+
+# ============================================================
+# MODÈLE NLP — BARThez
+# ============================================================
+nlp:
+  base_model: moussaKam/barthez
+  max_new_tokens: 40
+  num_beams: 4
+  early_stopping: true
+  no_repeat_ngram_size: 3
+  repetition_penalty: 2.0
+
+
+# ============================================================
+# ENTRAÎNEMENT NLP
+# ============================================================
+training_nlp:
+  epochs: 20
+  batch_size: 8
+  learning_rate: 5.0e-5
+  warmup_steps: 100
+  weight_decay: 0.01
+  eval_steps: 50
+  save_steps: 50
+  logging_steps: 10
+  max_input_length: 64
+  max_target_length: 128
+
+
+# ============================================================
+# MODÈLE LSTM
+# ============================================================
+lstm:
+  target_frames: 60
+  predict_every_n_frames: 5
+  confidence_threshold: 0.50
+  stability_frames: 5
+  cooldown_frames: 30
+  skip_inconnu: true
+  n_features: 150  # 8x3 visage + 21x3 main gauche + 21x3 main droite
+
+  # Landmarks faciaux sélectionnés
+  face_landmarks: [13, 14, 61, 291, 159, 386, 70, 300]
+
+  # Webcam
+  frame_width: 1280
+  frame_height: 720
+  fps: 30
+
+
+# ============================================================
+# ENTRAÎNEMENT LSTM
+# ============================================================
+training_lstm:
+  epochs: 50
+  batch_size: 16
+  learning_rate: 1.0e-3
+  validation_split: 0.2
+  patience: 10  # early stopping
+
+
+# ============================================================
+# TTS — gTTS
+# ============================================================
+tts:
+  lang: fr
+  slow: false
+
+
+# ============================================================
+# API — FastAPI
+# ============================================================
+api:
+  title: Sensi API
+  description: API de traduction du langage des signes (LSF) en français
+  version: 0.1.0
+  host: 0.0.0.0
+  port: 8080
+
+
+# ============================================================
+# VOCABULAIRE LSF — 20 glosses
+# ============================================================
+glosses:
+  - AIDER
+  - AMELIORER
+  - AMI
+  - AUJOURD_HUI
+  - BONJOUR
+  - COMMUNIQUER
+  - CONTENT
+  - ENTENDANTS
+  - JE_SUIS
+  - JE_VEUX
+  - LANGUE_DES_SIGNES
+  - MERCI
+  - OUTIL
+  - OUTIL_POINTAGE
+  - PRESENTER
+  - PROJET
+  - SOURD
+  - SOURD_POINTAGE
+  - TRADUCTION
+  - VOCAL

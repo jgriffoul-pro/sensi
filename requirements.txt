@@ -21,3 +21,5 @@ sacrebleu
 accelerate
 gTTS==2.5.4
 click==8.1.8
+
+pytest

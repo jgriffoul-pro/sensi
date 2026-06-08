@@ -1,23 +1,40 @@
-raw_data/
-.DS_Store
-.python-version
-*.pyc
-__pycache__/
-.omo/
+# ============================================================
+# SENSI — .gitignore
+# ============================================================
+
+# Environnement
 .env
+.python-version
+.omo/
 old/
 
-models/
-output/
-data/
+# Cache Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.pytest_cache/
 
-capture/train_data/
+# macOS
+.DS_Store
 capture/.DS_Store
 capture/.omo/
 capture/.python-version
 
-*.npy
-*.webm
+# Données
+raw_data/
+data/
+output/
+capture/train_data/
+
+# Modèles lourds — partagés via AirDrop
+*.safetensors
+*.keras
 *.h5
 *.pt
-*.keras
+*.npy
+*.webm
+models/barthez_sensi_final/sentencepiece.bpe.model
+
+# Environnements virtuels
+.venv/
+.vscode/
