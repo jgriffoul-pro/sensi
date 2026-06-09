@@ -93,12 +93,15 @@ def generate_phrase(glosses: list[str]) -> str:
         )
         phrase = result[0]["generated_text"]
 
-        # Coupe à la première fin de phrase
+# Couper au premier point/!/?
         match = re.search(r'[.!?]', phrase)
         if match:
-            phrase = phrase[:match.end()]
+            phrase = phrase[:match.end()].strip()
+        # Sécurité : virer les tokens parasites résiduels
+        phrase = re.sub(r'[\s]*[A-Z]{3,}.*$', '', phrase).strip()
+        if not phrase.endswith(('.', '!', '?')):
+            phrase = phrase + '.'
 
-        phrase = phrase.strip()
         logger.info(f"NLP — Phrase générée : {phrase}")
         return phrase
 

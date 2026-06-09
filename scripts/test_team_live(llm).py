@@ -19,6 +19,7 @@ from collections import deque
 from datetime import datetime
 from pathlib import Path
 
+import requests
 import numpy as np
 import cv2
 import mediapipe as mp
@@ -36,6 +37,9 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 SEQUENCE_TXT = OUTPUT_DIR / 'sequence.txt'
 SEQUENCE_JSON = OUTPUT_DIR / 'sequence.json'
 PHRASES_LOG = OUTPUT_DIR / 'phrases.log'
+
+# URL de l'API FastAPI
+API_URL = "http://localhost:8000/api/v1/predict/sentence/audio"
 
 TARGET_FRAMES = 60
 PREDICT_EVERY_N_FRAMES = 5
@@ -143,10 +147,7 @@ def draw_landmarks(frame, results):
 # ============================================================
 def save_sequence(detected_sequence, detected_meta):
     """Sauve la séquence courante dans txt + json. Appelée à chaque ajout."""
-    # Fichier texte simple : un mot par ligne, séparés par espace pour le LLM
     SEQUENCE_TXT.write_text(' '.join(detected_sequence), encoding='utf-8')
-
-    # Fichier JSON avec timestamps et confidences
     SEQUENCE_JSON.write_text(
         json.dumps({
             'signs': detected_sequence,
@@ -159,14 +160,41 @@ def save_sequence(detected_sequence, detected_meta):
 
 
 def log_phrase(phrase):
-    """Ajoute la phrase validée au log historique."""
+    """
+    Ajoute la phrase validée au log historique et envoie
+    directement les glosses au pipeline NLP via l'API.
+    """
+    # Log historique — gardé comme trace
     timestamp = datetime.now().isoformat(timespec='seconds')
     with open(PHRASES_LOG, 'a', encoding='utf-8') as f:
         f.write(f'[{timestamp}] {phrase}\n')
 
-    # Sauvegarde de la dernière phrase validée — lue par l'API
-    LAST_PHRASE = OUTPUT_DIR / 'last_phrase.txt'
-    LAST_PHRASE.write_text(phrase, encoding='utf-8')
+    # Filtre INCONNU + mise en majuscules
+    glosses = [g.upper() for g in phrase.split() if g.upper() != 'INCONNU']
+
+    if not glosses:
+        print('⚠️  Séquence vide après filtrage INCONNU.')
+        return
+
+    print(f'📤 Envoi au NLP : {glosses}')
+
+    # Envoi direct à l'API
+    try:
+        response = requests.post(
+            API_URL,
+            json={"glosses": glosses},
+            timeout=10,
+        )
+        if response.status_code == 200:
+            phrase_fr = response.headers.get('X-Phrase', '')
+            print(f'🗣️  Phrase : {phrase_fr}')
+        else:
+            print(f'⚠️  API erreur {response.status_code}')
+
+    except requests.exceptions.ConnectionError:
+        print('⚠️  API non disponible — vérifie que make run est lancé.')
+    except requests.exceptions.Timeout:
+        print('⚠️  API timeout.')
 
 
 # ============================================================
@@ -187,8 +215,8 @@ def main():
 
     sequence_buf = deque(maxlen=TARGET_FRAMES)
     stability_history = deque(maxlen=STABILITY_FRAMES)
-    detected_sequence = []         # liste de strings : ["bonjour", "merci", ...]
-    detected_meta = []             # liste de dicts avec confidence + timestamp
+    detected_sequence = []
+    detected_meta = []
     last_added_sign = None
     cooldown_remaining = 0
     last_validated_phrase = ''
@@ -249,8 +277,6 @@ def main():
                     cooldown_remaining = COOLDOWN_FRAMES
                     stability_history.clear()
                     print(f'✅ {validated_sign} ({current_pred_conf:.0%})  → sauvegardé')
-
-                    # ENREGISTREMENT AUTOMATIQUE
                     save_sequence(detected_sequence, detected_meta)
 
         frame = draw_landmarks(frame, results)
