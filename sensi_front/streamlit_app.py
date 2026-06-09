@@ -45,8 +45,8 @@ if st.button("🎤 Traduire la séquence détectée", type="primary"):
                 if error:
                     st.warning("Aucune séquence détectée. Lance le script LSTM et fais des signes.")
                 else:
-                    phrase = response.headers.get("x-phrase", "")
-                    glosses = response.headers.get("x-glosses", "")
+                    phrase = response.headers.get("phrase", "")
+                    glosses = response.headers.get("x-glosses", response.headers.get("glosses", ""))
                     st.caption(f"Séquence : {' → '.join(glosses.split())}")
                     st.success(f"**{phrase}**")
                     st.audio(response.content, format="audio/mp3")
@@ -93,7 +93,7 @@ if st.button("🎤 Traduire (simulation)", disabled=not glosses_input):
             )
 
             if response.status_code == 200:
-                phrase = response.headers.get("x-phrase", "")
+                phrase = response.headers.get("phrase", "")
                 st.success(f"**{phrase}**")
                 st.audio(response.content, format="audio/mp3")
             else:

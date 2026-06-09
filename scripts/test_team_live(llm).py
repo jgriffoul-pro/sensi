@@ -15,6 +15,7 @@ Touches :
 """
 
 import json
+import os
 from collections import deque
 from datetime import datetime
 from pathlib import Path
@@ -23,6 +24,7 @@ import numpy as np
 import cv2
 import mediapipe as mp
 import tensorflow as tf
+import requests as http_requests
 
 
 MODEL_DIR = Path('./models')
@@ -45,6 +47,16 @@ COOLDOWN_FRAMES = 30
 SKIP_INCONNU = True
 
 FACE_LANDMARKS_SELECTED = [13, 14, 61, 291, 159, 386, 70, 300]
+
+# MODIF 008 — API directe (Cloud Run ou local Docker)
+# Réf : modifs/008_live_api_integration.txt
+API_URL = os.getenv('SENSI_API_URL', 'https://sensi-api-294525653433.europe-west1.run.app/api/v1')
+
+# MODIF 001 — Mapping vocabulaire BiLSTM → NLP (côté client)
+LABEL_MAP = {
+    "SOURDE": "SOURD",
+    "ENTENDANT": "ENTENDANTS",
+}
 
 
 # ============================================================
@@ -74,6 +86,7 @@ print(f'\n📁 Export auto vers :')
 print(f'   {SEQUENCE_TXT.absolute()}')
 print(f'   {SEQUENCE_JSON.absolute()}')
 print(f'   {PHRASES_LOG.absolute()}')
+print(f'\n🌐 API : {API_URL}')
 
 
 # ============================================================
@@ -139,6 +152,52 @@ def draw_landmarks(frame, results):
 
 
 # ============================================================
+# MODIF 008 — Envoi direct à l'API
+# Réf : modifs/008_live_api_integration.txt
+# ============================================================
+LAST_AUDIO = OUTPUT_DIR / 'last_audio.mp3'
+
+
+def send_to_api(glosses: list[str]) -> str | None:
+    """
+    Envoie les glosses à l'API, récupère phrase + audio.
+    Retourne la phrase traduite ou None si erreur.
+    """
+    api_glosses = [LABEL_MAP.get(g.upper(), g.upper()) for g in glosses]
+    payload = {"glosses": api_glosses}
+
+    try:
+        phrase_resp = http_requests.post(
+            f'{API_URL}/predict/sentence',
+            json=payload,
+            timeout=60,
+        )
+        phrase_resp.raise_for_status()
+        phrase = phrase_resp.json().get('phrase', '')
+
+        audio_resp = http_requests.post(
+            f'{API_URL}/predict/sentence/audio',
+            json=payload,
+            timeout=60,
+        )
+        audio_resp.raise_for_status()
+
+        LAST_AUDIO.write_bytes(audio_resp.content)
+        print(f'🗣️  {phrase}')
+        os.system(f'afplay "{LAST_AUDIO}" &')
+        return phrase
+
+    except http_requests.exceptions.ConnectionError:
+        print(f'❌ API inaccessible : {API_URL}')
+    except http_requests.exceptions.Timeout:
+        print(f'❌ API timeout (>60s)')
+    except Exception as e:
+        print(f'❌ Erreur API : {e}')
+
+    return None
+
+
+# ============================================================
 # EXPORT AUTO
 # ============================================================
 def save_sequence(detected_sequence, detected_meta):
@@ -192,6 +251,7 @@ def main():
     last_added_sign = None
     cooldown_remaining = 0
     last_validated_phrase = ''
+    api_response_line = ''
 
     current_pred_idx = -1
     current_pred_conf = 0.0
@@ -315,6 +375,11 @@ def main():
             cv2.putText(frame, f'Phrase : {last_validated_phrase}', (20, h - 40),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
+        # MODIF 008 — affichage réponse API
+        if api_response_line:
+            cv2.putText(frame, api_response_line, (20, h - 155),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 200, 255), 2)
+
         cv2.putText(frame, 'R = reset  |  V = valider phrase  |  Q = quitter',
                     (20, h - 12),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.45, (200, 200, 200), 1)
@@ -331,20 +396,31 @@ def main():
             detected_meta.clear()
             last_added_sign = None
             last_validated_phrase = ''
+            api_response_line = ''
             cooldown_remaining = 0
             save_sequence(detected_sequence, detected_meta)
             print('🔄 Reset (fichiers vides).')
         if key == ord('v'):
             if detected_sequence:
                 last_validated_phrase = ' '.join(detected_sequence)
-                print(f'\n📝 Phrase validee : {last_validated_phrase}\n')
+                print(f'\n📝 Phrase validee : {last_validated_phrase}')
+
+                # MODIF 008 — envoi direct à l'API
+                api_phrase = send_to_api(detected_sequence)
+                if api_phrase:
+                    api_response_line = f'→ {api_phrase}'
+                else:
+                    api_response_line = '→ API indisponible'
+
                 log_phrase(last_validated_phrase)
                 detected_sequence.clear()
                 detected_meta.clear()
                 last_added_sign = None
                 save_sequence(detected_sequence, detected_meta)
+                print()
             else:
                 print('⚠️ Sequence vide.')
+                api_response_line = ''
 
     cap.release()
     cv2.destroyAllWindows()

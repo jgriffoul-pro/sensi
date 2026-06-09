@@ -1,0 +1,62 @@
+============================================================
+MODIF 002 — Chemin output/ adaptatif pour Docker
+============================================================
+Date      : 2026-06-09
+Fichiers  : app/services/preprocessing.py
+Reference : modifs/002_chemin_output_docker.txt
+
+============================================================
+PROBLEME
+============================================================
+
+app/services/preprocessing.py utilise un chemin absolu
+base sur __file__ pour localiser output/last_phrase.txt :
+
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent
+    LAST_PHRASE_TXT = BASE_DIR / "output" / "last_phrase.txt"
+
+En local (depuis la racine du projet) :
+    __file__ = /...sensi/app/services/preprocessing.py
+    BASE_DIR = /...sensi/
+    → /...sensi/output/last_phrase.txt  ✅
+
+En Docker :
+    __file__ = /app/app/services/preprocessing.py
+    BASE_DIR = /app/
+    → /app/output/last_phrase.txt
+
+Mais le dossier /app/output/ n'existe PAS dans l'image Docker
+(car le Dockerfile ne le copie pas et ne le cree pas).
+
+De plus, le chemin n'est pas configurable via une variable
+d'environnement, contrairement a nlp.py qui utilise MODEL_BASE_DIR.
+
+============================================================
+SOLUTION
+============================================================
+
+1. Utiliser une variable d'environnement OUTPUT_DIR pour
+   definir le chemin du dossier output/.
+
+   En local : OUTPUT_DIR non defini → comportement actuel
+   En Docker : OUTPUT_DIR=/app/output (defini dans Dockerfile)
+
+2. Le Dockerfile (modif 003) cree le repertoire output/
+   avec un fichier last_phrase.txt vide par defaut.
+
+Code modifie dans preprocessing.py :
+
+    OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", str(
+        Path(__file__).resolve().parent.parent.parent / "output"
+    )))
+    LAST_PHRASE_TXT = OUTPUT_DIR / "last_phrase.txt"
+
+============================================================
+IMPACT
+============================================================
+
+- Local   : Aucun changement (OUTPUT_DIR non defini)
+- Docker  : Le chemin est configurable et le repertoire existe
+- Cloud Run : idem Docker
+
+============================================================

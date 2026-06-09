@@ -56,7 +56,7 @@ async def predict_sentence_audio(request: PredictRequest):
         return Response(
             content=audio,
             media_type="audio/mp3",
-            headers={"X-Phrase": phrase}
+            headers={"Phrase": phrase}
         )
 
     except ValueError as e:
@@ -95,10 +95,10 @@ async def predict_from_sequence():
         return Response(
             content=audio,
             media_type="audio/mp3",
-            headers={
-                "X-Phrase": phrase,
-                "X-Glosses": " ".join(glosses),
-            }
+                headers={
+                    "Phrase": phrase,
+                    "Glosses": " ".join(glosses),
+                }
         )
 
     except Exception as e:

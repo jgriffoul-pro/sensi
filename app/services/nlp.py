@@ -1,107 +1,60 @@
-"""
-Service NLP — BARThez
-Convertit une liste de glosses LSF en phrase française naturelle.
-"""
-
 import re
+import os
 import logging
-from pathlib import Path
-
-import yaml
 import torch
-from transformers import pipeline, CamembertTokenizer, AutoModelForSeq2SeqLM
-
-# ============================================================
-# CONFIGURATION
-# ============================================================
-
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-CONFIG_PATH = BASE_DIR / "config" / "config.yaml"
-
-with open(CONFIG_PATH, encoding="utf-8") as f:
-    config = yaml.safe_load(f)
-
-MODEL_DIR = BASE_DIR / config["paths"]["barthez_dir"]
-MAX_NEW_TOKENS = config["nlp"]["max_new_tokens"]
-NUM_BEAMS = config["nlp"]["num_beams"]
-EARLY_STOPPING = config["nlp"]["early_stopping"]
-NO_REPEAT_NGRAM_SIZE = config["nlp"]["no_repeat_ngram_size"]
-REPETITION_PENALTY = config["nlp"]["repetition_penalty"]
-
-# ============================================================
-# LOGGING
-# ============================================================
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-# ============================================================
-# CHARGEMENT DU MODÈLE — une seule fois au démarrage
-# ============================================================
+# MODIF 006 — Resize embeddings + generation directe (sans pipeline wrapper)
+# Réf : modifs/006_resize_embeddings.txt
 
-device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-logger.info(f"NLP — Device : {device}")
-logger.info(f"NLP — Chargement du modèle : {MODEL_DIR}")
+BASE_DIR = Path(os.getenv("MODEL_BASE_DIR", "models"))
+MODEL_DIR = BASE_DIR / "barthez_sensi_final"
 
-tokenizer = CamembertTokenizer.from_pretrained(MODEL_DIR)
-model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_DIR).to(device)
-
-generator = pipeline(
-    "text2text-generation",
-    model=model,
-    tokenizer=tokenizer,
-    device=device,
+device = torch.device(
+    "mps" if torch.backends.mps.is_available()
+    else "cpu"
 )
 
-logger.info("NLP — Modèle BARThez chargé ✅")
+tokenizer = AutoTokenizer.from_pretrained(str(MODEL_DIR), local_files_only=True)
+model = AutoModelForSeq2SeqLM.from_pretrained(str(MODEL_DIR), local_files_only=True)
 
+# Le tokenizer a des tokens jusqu'à l'ID 50003 mais le modèle a vocab_size=50002.
+# On resize pour couvrir tous les IDs connus du tokenizer.
+vocab_size = max(tokenizer.get_vocab().values()) + 1
+model.resize_token_embeddings(vocab_size)
+logger.info(f"Embeddings resized to {vocab_size} (tokenizer has {len(tokenizer)} tokens)")
 
-# ============================================================
-# FONCTION PRINCIPALE
-# ============================================================
+model = model.to(device)
+model.eval()
+
 
 def generate_phrase(glosses: list[str]) -> str:
-    """
-    Convertit une liste de glosses LSF en phrase française naturelle.
-
-    Args:
-        glosses : liste de glosses prédites par le LSTM
-                  ex: ["BONJOUR", "JE_SUIS", "CONTENT", "PRESENTER", "PROJET"]
-
-    Returns:
-        str : phrase française naturelle
-              ex: "Bonjour, je suis content de vous présenter le projet."
-
-    Raises:
-        ValueError : si la liste de glosses est vide
-        RuntimeError : si la génération échoue
-    """
-    if not glosses:
-        raise ValueError("La liste de glosses est vide.")
-
-    # Conversion liste → string
     glosses_str = " ".join(glosses)
-    logger.info(f"NLP — Génération pour : {glosses_str}")
 
-    try:
-        result = generator(
-            glosses_str,
-            max_new_tokens=MAX_NEW_TOKENS,
-            num_beams=NUM_BEAMS,
-            early_stopping=EARLY_STOPPING,
-            no_repeat_ngram_size=NO_REPEAT_NGRAM_SIZE,
-            repetition_penalty=REPETITION_PENALTY,
+    inputs = tokenizer(
+        glosses_str,
+        max_length=64,
+        truncation=True,
+        return_tensors="pt",
+    ).to(device)
+
+    with torch.no_grad():
+        outputs = model.generate(
+            **inputs,
+            max_new_tokens=40,
+            num_beams=4,
+            early_stopping=True,
+            no_repeat_ngram_size=3,
+            repetition_penalty=2.0,
         )
-        phrase = result[0]["generated_text"]
 
-        # Coupe à la première fin de phrase
-        match = re.search(r'[.!?]', phrase)
-        if match:
-            phrase = phrase[:match.end()]
+    phrase = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-        phrase = phrase.strip()
-        logger.info(f"NLP — Phrase générée : {phrase}")
-        return phrase
+    match = re.search(r'[.!?]', phrase)
+    if match:
+        phrase = phrase[:match.end()]
 
-    except Exception as e:
-        logger.error(f"NLP — Erreur lors de la génération : {e}")
-        raise RuntimeError(f"Erreur lors de la génération de la phrase : {e}")
+    return phrase.strip()

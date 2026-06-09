@@ -38,3 +38,4 @@ models/barthez_sensi_final/sentencepiece.bpe.model
 # Environnements virtuels
 .venv/
 .vscode/
+train_data/

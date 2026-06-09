@@ -1,0 +1,66 @@
+============================================================
+MODIF 003 — Dockerfile optimise et corrige
+============================================================
+Date      : 2026-06-09
+Fichiers  : Dockerfile
+Reference : modifs/003_dockerfile_optimise.txt
+
+============================================================
+PROBLEME
+============================================================
+
+1. Le dossier output/ n'existe pas dans l'image Docker.
+   → /predict/from-sequence echoue (fichier introuvable).
+
+2. Le Dockerfile copie TOUT le dossier models/, y compris :
+   - sensi_team_v6.keras (modele BiLSTM, ~50MB, inutile en Docker)
+   - model_lsf_bilstm.keras (ancien modele, inutile)
+   - Les fichiers metadata du LSTM
+   L'API n'utilise que barthez_sensi_final/ pour le NLP.
+
+3. requirements.txt inclut tensorflow et keras, qui sont
+   inutiles pour l'API en Docker (seul le NLP tourne).
+   Ces dependances gonflent l'image de ~2GB.
+
+4. Le package PyYAML n'est pas dans requirements.txt mais
+   app/main.py fait `import yaml` → ImportError en Docker.
+
+============================================================
+SOLUTION
+============================================================
+
+Dockerfile refait :
+
+1. Creation du repertoire output/ + fichier last_phrase.txt
+   vide par defaut.
+
+2. COPY models/barthez_sensi_final/ uniquement (pas les .keras).
+
+3. Variable d'environnement OUTPUT_DIR=/app/output pour
+   preprocessing.py (modif 002).
+
+4. Variable MODEL_BASE_DIR=/app/models (deja present).
+
+5. requirements.txt mis a jour (modif 004) pour enlever
+   tensorflow/keras/mediapipe/opencv inutiles en Docker
+   et corriger la version de torch.
+
+============================================================
+AVANT / APRES (taille image estimee)
+============================================================
+
+AVANT :
+  - tensorflow ~1.5 GB
+  - keras ~200 MB
+  - mediapipe ~100 MB
+  - opencv ~50 MB
+  - Modeles LSTM ~100 MB
+  → Image totale ~4-5 GB
+
+APRES :
+  - torch CPU-only ~800 MB
+  - transformers ~200 MB
+  - Modele BARThez ~400 MB
+  → Image totale ~2 GB
+
+============================================================

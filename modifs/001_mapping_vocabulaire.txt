@@ -1,0 +1,67 @@
+============================================================
+MODIF 001 — Mapping vocabulaire BiLSTM → NLP
+============================================================
+Date      : 2026-06-09
+Fichiers  : app/services/model.py
+Reference : modifs/001_mapping_vocabulaire.txt
+
+============================================================
+PROBLEME
+============================================================
+
+Le modele BiLSTM v6 (sensi_team_v6.keras) produit des labels
+qui ne correspondent pas au vocabulaire attendu par le modele
+NLP BARThez.
+
+Incoherences identifiees :
+
+  BiLSTM (idx_to_sign)   →   BARThez / config.yaml
+  ────────────────────────────────────────────────────
+  sourde                  →   SOURD
+  entendant               →   ENTENDANTS
+
+Le modele BiLSTM produit des labels en MINUSCULES :
+  "bonjour", "je_suis", "sourde", "entendant"...
+
+preprocessing.py convertit en majuscules (.upper()) :
+  "BONJOUR", "JE_SUIS", "SOURDE", "ENTENDANT"
+
+Mais BARThez a ete entraine avec :
+  "SOURD" (pas SOURDE)
+  "ENTENDANTS" (pas ENTENDANT)
+
+Consquence : ces glosses sont envoyees au NLP sous une forme
+qu'il ne connait pas, produisant des traductions incorrectes
+ou des erreurs silencieuses.
+
+============================================================
+SOLUTION
+============================================================
+
+Ajout d'un dictionnaire LABEL_MAP dans app/services/model.py
+qui re-mappe les labels du BiLSTM vers le vocabulaire BARThez.
+
+Le mapping est applique apres la conversion en majuscules,
+avant l'envoi au modele NLP.
+
+LABEL_MAP = {
+    "SOURDE": "SOURD",
+    "ENTENDANT": "ENTENDANTS",
+}
+
+Code ajoute dans get_glosses_from_sequence() :
+    glosses = [LABEL_MAP.get(g, g) for g in glosses]
+
+Ce mapping est conservatif : si une gloss n'est pas dans
+LABEL_MAP, elle est transmise telle quelle (pas de perte).
+
+============================================================
+TEST
+============================================================
+
+Verifications manuelles :
+  - SOURDE  → SOURD     ✅
+  - ENTENDANT → ENTENDANTS  ✅
+  - BONJOUR → BONJOUR   ✅ (inchangé, label correct)
+
+============================================================
