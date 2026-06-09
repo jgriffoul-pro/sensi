@@ -1,0 +1,49 @@
+============================================================
+MODIF 005 — Correction API_URL Streamlit
+============================================================
+Date      : 2026-06-09
+Fichiers  : sensi_front/.env
+Reference : modifs/005_api_url_streamlit.txt
+
+============================================================
+PROBLEME
+============================================================
+
+sensi_front/.env contient :
+    API_URL=https://sensi-api-294525653433.europe-west1.run.app
+
+Mais le routeur FastAPI est monte avec le prefix /api/v1 :
+    app.include_router(predict.router, prefix="/api/v1")
+
+Donc les routes sont :
+    POST /api/v1/predict/sentence
+    POST /api/v1/predict/sentence/audio
+    POST /api/v1/predict/from-sequence
+
+Le frontend Streamlit appelle :
+    requests.post(f"{API_URL}/predict/from-sequence")
+    → https://...run.app/predict/from-sequence
+    → 404 Not Found
+
+Il manque /api/v1 dans l'URL de base.
+
+En local (.env par defaut) :
+    API_URL=http://localhost:8000/api/v1
+    → requests.post("http://localhost:8000/api/v1/predict/from-sequence")
+    → 200 OK  ✅
+
+============================================================
+SOLUTION
+============================================================
+
+Corriger le .env pour inclure /api/v1 :
+
+    API_URL=https://sensi-api-294525653433.europe-west1.run.app/api/v1
+
+============================================================
+IMPACT
+============================================================
+
+- Streamlit en local : aucun changement (fallback correct)
+- Streamlit → Cloud Run : les appels API fonctionnent
+============================================================

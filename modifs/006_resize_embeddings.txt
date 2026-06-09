@@ -1,0 +1,37 @@
+============================================================
+MODIF 006 — Resize token embeddings BARThez
+============================================================
+Date      : 2026-06-09
+Fichiers  : app/services/nlp.py
+Reference : modifs/006_resize_embeddings.txt
+
+============================================================
+PROBLEME
+============================================================
+
+Erreur au runtime :
+    "index out of range in self"
+
+Cause : le tokenizer CamembertTokenizer charge un token <s>
+avec l'ID 50003 (visible dans added_tokens.json et
+tokenizer_config.json → added_tokens_decoder["50003"]).
+
+Mais le modele a vocab_size=50002 dans config.json.
+L'embedding layer ne couvre que les indices 0 a 50001.
+
+Quand le tokenizer encode le texte, il insere le BOS token <s>
+(ID 50003) qui depasse la taille de l'embedding matrix → crash.
+
+============================================================
+SOLUTION
+============================================================
+
+Ajout de model.resize_token_embeddings(len(tokenizer)) apres
+le chargement du modele, avant de le deplacer sur le device.
+
+Cette operation agrandit la embedding matrix pour couvrir
+tous les tokens connus du tokenizer. Les nouveaux embeddings
+sont initialises aleatoirement (acceptable car <s> est un
+token special peu utilise dans le contenu reel).
+
+============================================================

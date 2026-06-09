@@ -1,0 +1,49 @@
+============================================================
+MODIF 004 — Correction requirements.txt
+============================================================
+Date      : 2026-06-09
+Fichiers  : requirements.txt
+Reference : modifs/004_requirements.txt
+
+============================================================
+PROBLEME
+============================================================
+
+1. torch==2.12.0 n'existe PAS. Derniere version stable : 2.5.x.
+   pip install echoue en Docker.
+
+2. tensorflow, keras, mediapipe, opencv sont inutiles pour
+   l'API Docker (seul le modele NLP BARThez tourne).
+   Ils gonflent l'image de ~2 GB.
+
+3. PyYAML manque mais app/main.py fait `import yaml`.
+   En local ca marche si pyyaml est installe indirectement,
+   mais en Docker slim → ImportError.
+
+4. Les versions de certaines dependances sont trop specifiques
+   et peuvent causer des conflits.
+
+============================================================
+SOLUTION
+============================================================
+
+Separation en deux sections :
+
+Section API (Docker-ready) :
+  - fastapi, uvicorn, python-multipart
+  - torch (version CPU, sans GPU)
+  - transformers, sentencepiece, tokenizers
+  - accelerate, gTTS
+  - pyyaml (pour config.yaml)
+  - python-dotenv
+
+Section DEVELOPPEMENT LOCAL (LSTM + capture) :
+  - tensorflow, keras
+  - mediapipe, opencv-python-headless
+  - numpy
+  - datasets, sacrebleu
+  - pytest
+
+En Docker, seul le premier groupe est installe.
+
+============================================================

@@ -1,6 +1,20 @@
 {
-  "signs": [],
-  "phrase_brute": "",
-  "details": [],
-  "last_update": "2026-06-07T21:58:12"
+  "signs": [
+    "presenter",
+    "outil"
+  ],
+  "phrase_brute": "presenter outil",
+  "details": [
+    {
+      "sign": "presenter",
+      "confidence": 0.61,
+      "timestamp": "2026-06-09T12:45:23"
+    },
+    {
+      "sign": "outil",
+      "confidence": 0.762,
+      "timestamp": "2026-06-09T12:45:28"
+    }
+  ],
+  "last_update": "2026-06-09T12:45:28"
 }

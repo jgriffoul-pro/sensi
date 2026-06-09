@@ -1,0 +1,45 @@
+============================================================
+MODIF 007 — Requirements allégés pour Docker
+============================================================
+Date      : 2026-06-09
+Fichiers  : requirements-docker.txt (nouveau), Dockerfile
+Reference : modifs/007_requirements_docker.txt
+
+============================================================
+PROBLEME
+============================================================
+
+L'image Docker pesait ~5 Go car requirements.txt installe :
+- PyTorch avec CUDA (~3.5 Go de libs nvidia-*)
+- TensorFlow + Keras (~1.5 Go)
+- MediaPipe + OpenCV (~150 Mo)
+
+Cloud Run tourne sur CPU — CUDA est inutile.
+L'API ne fait tourner que BARThez — TensorFlow/Keras/MediaPipe
+sont inutiles (réservés au script LSTM local).
+
+Résultat : push de 5 Go vers Artifact Registry = très long.
+
+============================================================
+SOLUTION
+============================================================
+
+Création de requirements-docker.txt avec uniquement :
+- fastapi, uvicorn (API)
+- torch CPU-only (via --extra-index-url pytorch/whl/cpu)
+- transformers>=4.44.0 (fix mBART resize, modif 006)
+- sentencepiece, tokenizers (tokenizer BARThez)
+- gTTS (text-to-speech)
+- pyyaml (config.yaml)
+
+Le Dockerfile copie requirements-docker.txt au lieu de
+requirements.txt.
+
+============================================================
+AVANT / APRES
+============================================================
+
+AVANT : image ~5 Go, push ~20 min
+APRES : image ~1.5 Go, push ~5 min
+
+============================================================

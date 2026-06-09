@@ -1,43 +1,37 @@
-from pathlib import Path
 from app.services.preprocessing import read_sequence_from_file
 
 # ============================================================
-# CHARGEMENT MODELE LSTM — sensi_team_v6.keras
+# MODIF 001 — Mapping vocabulaire BiLSTM → NLP
+# Réf : modifs/001_mapping_vocabulaire.txt
+# ============================================================
+# Le modèle BiLSTM v6 produit des labels qui ne correspondent
+# pas au vocabulaire BARThez. Ce dictionnaire corrige les
+# incohérences détectées.
 # ============================================================
 
-# import json
-# import numpy as np
-# import tensorflow as tf
-# from collections import deque
-
-# MODEL_DIR = Path("models")
-# MODEL_NAME = "sensi_team_v6.keras"
-# METADATA_NAME = "sensi_team_v6_metadata.json"
-
-# CONFIDENCE_THRESHOLD = 0.50
-# TARGET_FRAMES = 60
-
-# model_lstm = tf.keras.models.load_model(MODEL_DIR / MODEL_NAME)
-
-# with open(MODEL_DIR / METADATA_NAME, "r") as f:
-#     metadata = json.load(f)
-
-# idx_to_sign = {int(k): v for k, v in metadata["idx_to_sign"].items()}
+LABEL_MAP = {
+    "SOURDE": "SOURD",
+    "ENTENDANT": "ENTENDANTS",
+}
 
 
 def get_glosses_from_sequence() -> list[str]:
     """
     Récupère les glosses depuis output/sequence.txt (écrit par test_team_live).
     Filtre le signe 'INCONNU' qui ne doit pas être transmis au NLP.
+    Applique le mapping LABEL_MAP pour corriger les incohérences BiLSTM→NLP.
 
     Returns:
-        list[str] : liste de glosses en majuscules, sans INCONNU
+        list[str] : liste de glosses en majuscules, sans INCONNU, mappées
                     ex: ["BONJOUR", "JE_SUIS", "CONTENT"]
     """
     glosses = read_sequence_from_file()
 
     # Filtre le signe inconnu — ne doit pas être transmis au modèle NLP
     glosses = [g for g in glosses if g != "INCONNU"]
+
+    # MODIF 001 — Mapping vocabulaire BiLSTM → NLP
+    glosses = [LABEL_MAP.get(g, g) for g in glosses]
 
     return glosses
 

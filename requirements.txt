@@ -1,25 +1,35 @@
+# ============================================================
+# MODIF 004 — Requirements corrigés
+# Réf : modifs/004_requirements.txt
+# ============================================================
+
+# ============================================================
+# API (requis en local ET Docker)
+# ============================================================
 fastapi==0.111.0
 uvicorn==0.30.1
 python-multipart==0.0.9
+python-dotenv==1.0.1
+pyyaml>=6.0
+
+# NLP — BARThez (pipeline complet)
+torch>=2.2.0
+transformers>=4.44.0
+sentencepiece==0.2.1
+tokenizers==0.19.1
+accelerate
+gTTS==2.5.4
+click==8.1.8
+
+# ============================================================
+# DEVELOPPEMENT LOCAL — LSTM + capture + tests
+# (non installés en Docker, uniquement pour le dev local)
+# ============================================================
 numpy==1.26.4
 opencv-python-headless==4.10.0.84
 mediapipe==0.10.9
 tensorflow==2.16.2
 keras==3.12.2
-python-dotenv==1.0.1
-
-# NLP — BARThez fine-tuning
-torch==2.12.0
-transformers==4.40.0
-sentencepiece==0.2.1
-tokenizers==0.19.1
 datasets
 sacrebleu
-
-
-# NLP — pipeline complet
-accelerate
-gTTS==2.5.4
-click==8.1.8
-
 pytest

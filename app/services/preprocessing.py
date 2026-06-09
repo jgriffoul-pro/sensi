@@ -1,12 +1,19 @@
+import os
 from pathlib import Path
 
-# Chemin absolu depuis la racine du projet — indépendant d'où on lance le script
-# __file__ = sensi/app/services/preprocessing.py
-# .parent.parent.parent = sensi/
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+# ============================================================
+# MODIF 002 — Chemin output/ adaptatif pour Docker
+# Réf : modifs/002_chemin_output_docker.txt
+# ============================================================
+# En local : OUTPUT_DIR non défini → chemin relatif au projet
+# En Docker : OUTPUT_DIR=/app/output → défini dans le Dockerfile
+# ============================================================
 
-SEQUENCE_TXT = BASE_DIR / "output" / "sequence.txt"
-LAST_PHRASE_TXT = BASE_DIR / "output" / "last_phrase.txt"
+_output_dir_default = str(Path(__file__).resolve().parent.parent.parent / "output")
+OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", _output_dir_default))
+
+SEQUENCE_TXT = OUTPUT_DIR / "sequence.txt"
+LAST_PHRASE_TXT = OUTPUT_DIR / "last_phrase.txt"
 
 
 def read_sequence_from_file() -> list[str]:

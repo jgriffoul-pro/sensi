@@ -1,0 +1,66 @@
+============================================================
+MODIF 008 — Intégration API directe dans le script live
+============================================================
+Date      : 2026-06-09
+Fichiers  : scripts/test_team_live(llm).py
+Reference : modifs/008_live_api_integration.txt
+
+============================================================
+PROBLEME
+============================================================
+
+Le script live ecrit les glosses dans output/last_phrase.txt.
+L'API (Docker/Cloud Run) ne peut pas lire le filesystem
+local de l'utilisateur.
+
+Le flux actuel :
+  Webcam → BiLSTM → fichier.txt → Streamlit lit fichier → appelle API
+                                  ↑ impossible en Docker/Cloud Run
+
+============================================================
+SOLUTION
+============================================================
+
+Ajout d'un appel HTTP POST direct vers l'API quand l'utilisateur
+appuie sur V pour valider la phrase.
+
+Nouveau flux :
+  Webcam → BiLSTM → [V] → POST /predict/sentence/audio → phrase + MP3
+                              ↓
+                    affiche phrase sur webcam + sauvegarde MP3
+
+Changements dans test_team_live(llm).py :
+
+1. Import requests + os + tempfile
+2. Configuration API_URL (Cloud Run par défaut, overridable)
+3. Label mapping (modif 001) appliqué côté client aussi
+4. Fonction send_to_api(glosses) :
+   - POST glosses majuscules + mappées vers /predict/sentence/audio
+   - Sauvegarde le MP3 dans output/last_audio.mp3
+   - Joue le MP3 via afplay (macOS)
+   - Retourne la phrase traduite
+5. Sur touche V :
+   - Appel send_to_api()
+   - Affiche la phrase traduite sur la fenêtre webcam
+   - Conserve le comportement existant (log + fichiers)
+
+============================================================
+CONFIGURATION
+============================================================
+
+API_URL par défaut :
+  https://sensi-api-294525653433.europe-west1.run.app/api/v1
+
+Utilisable en local Docker :
+  http://localhost:8080/api/v1
+
+Modification : changer la variable API_URL en haut du script.
+
+============================================================
+DEPENDANCES
+============================================================
+
+Ajout requis : requests (déjà installé via requirements.txt)
+Lecture audio : afplay (natif macOS, pas d'installation)
+
+============================================================
