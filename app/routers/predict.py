@@ -55,7 +55,7 @@ async def predict_sentence_audio(request: PredictRequest):
         phrase, audio = pipeline_sensi(request.glosses)
         return Response(
             content=audio,
-            media_type="audio/mp3",
+            media_type="audio/mpeg",
             headers={"X-Phrase": phrase}
         )
 
@@ -85,7 +85,7 @@ async def predict_from_sequence():
             logger.warning("Séquence vide — aucun signe détecté")
             return Response(
                 content=b"",
-                media_type="audio/mp3",
+                media_type="audio/mpeg",
                 headers={"X-Phrase": "", "X-Error": "Séquence vide"}
             )
 
@@ -94,10 +94,10 @@ async def predict_from_sequence():
 
         return Response(
             content=audio,
-            media_type="audio/mp3",
+            media_type="audio/mpeg",
             headers={
                 "X-Phrase": phrase,
-                "X-Glosses": " ".join(glosses),
+                "X-Glosses": " ".join(glosses)
             }
         )
 

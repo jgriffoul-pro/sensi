@@ -1,0 +1,437 @@
+"""
+SignLive — Reconnaissance LSF en temps réel dans Streamlit.
+
+Webcam → MediaPipe Holistic (150 features, no pose) → LSTM v6 → vote majoritaire
+→ séquence détectée → bouton Traduire → API NLP+TTS → audio.
+
+Mode Test (simulation manuelle) gardé dans un expander en backup.
+"""
+
+import json
+import os
+from collections import deque
+from pathlib import Path
+
+import cv2
+import mediapipe as mp
+import numpy as np
+import requests
+import streamlit as st
+import tensorflow as tf
+from dotenv import load_dotenv
+
+
+# ============================================================
+# CONFIG
+# ============================================================
+
+load_dotenv()
+API_URL = os.getenv("API_URL", "http://localhost:8000/api/v1")
+
+st.set_page_config(
+    page_title="SignLive — Sensi",
+    page_icon="🎥",
+    layout="wide",
+)
+
+# Chemin absolu vers models/ (indépendant du CWD de Streamlit)
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+MODEL_DIR = PROJECT_ROOT / "models"
+MODEL_NAME = "sensi_team_v6.keras"
+METADATA_NAME = "sensi_team_v6_metadata.json"
+
+TARGET_FRAMES = 60
+FACE_LANDMARKS_SELECTED = [13, 14, 61, 291, 159, 386, 70, 300]
+
+
+# ============================================================
+# CHARGEMENT (cache pour ne pas recharger à chaque interaction)
+# ============================================================
+
+@st.cache_resource
+def load_model_and_holistic():
+    """Charge le modèle LSTM, le metadata, et initialise MediaPipe Holistic."""
+    model = tf.keras.models.load_model(MODEL_DIR / MODEL_NAME)
+    with open(MODEL_DIR / METADATA_NAME, "r") as f:
+        metadata = json.load(f)
+    idx_to_sign = {int(k): v for k, v in metadata["idx_to_sign"].items()}
+
+    mp_holistic = mp.solutions.holistic
+    holistic = mp_holistic.Holistic(
+        static_image_mode=False,
+        model_complexity=1,
+        refine_face_landmarks=True,
+        min_detection_confidence=0.4,
+        min_tracking_confidence=0.4,
+    )
+    mp_drawing = mp.solutions.drawing_utils
+    return model, idx_to_sign, holistic, mp_holistic, mp_drawing, metadata
+
+
+# ============================================================
+# EXTRACTION DES 150 FEATURES (face + 2 mains, no pose)
+# Copié à l'identique depuis scripts/test_team_live.py
+# ============================================================
+
+def landmarks_to_vector_no_pose(results) -> np.ndarray:
+    if results.face_landmarks:
+        face = np.array(
+            [
+                [
+                    results.face_landmarks.landmark[i].x,
+                    results.face_landmarks.landmark[i].y,
+                    results.face_landmarks.landmark[i].z,
+                ]
+                for i in FACE_LANDMARKS_SELECTED
+            ],
+            dtype=np.float32,
+        ).flatten()
+    else:
+        face = np.zeros(len(FACE_LANDMARKS_SELECTED) * 3, dtype=np.float32)
+
+    if results.left_hand_landmarks:
+        left_hand = np.array(
+            [[lm.x, lm.y, lm.z] for lm in results.left_hand_landmarks.landmark],
+            dtype=np.float32,
+        ).flatten()
+    else:
+        left_hand = np.zeros(21 * 3, dtype=np.float32)
+
+    if results.right_hand_landmarks:
+        right_hand = np.array(
+            [[lm.x, lm.y, lm.z] for lm in results.right_hand_landmarks.landmark],
+            dtype=np.float32,
+        ).flatten()
+    else:
+        right_hand = np.zeros(21 * 3, dtype=np.float32)
+
+    return np.concatenate([face, left_hand, right_hand])
+
+
+def draw_landmarks(frame, results, mp_holistic, mp_drawing):
+    if results.face_landmarks:
+        mp_drawing.draw_landmarks(frame, results.face_landmarks, mp_holistic.FACEMESH_CONTOURS)
+    if results.left_hand_landmarks:
+        mp_drawing.draw_landmarks(frame, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
+    if results.right_hand_landmarks:
+        mp_drawing.draw_landmarks(frame, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
+    return frame
+
+
+# ============================================================
+# HEADER
+# ============================================================
+
+st.title("🎥 SignLive")
+st.caption("Reconnaissance temps réel de la Langue des Signes Française")
+
+# Session state init
+if "camera_active" not in st.session_state:
+    st.session_state.camera_active = False
+if "detected_sequence" not in st.session_state:
+    st.session_state.detected_sequence = []
+if "last_phrase" not in st.session_state:
+    st.session_state.last_phrase = ""
+if "last_audio" not in st.session_state:
+    st.session_state.last_audio = None
+
+
+# Chargement du modèle (au premier passage)
+with st.spinner("🔧 Chargement du modèle Sensi v6..."):
+    model, idx_to_sign, holistic, mp_holistic, mp_drawing, metadata = load_model_and_holistic()
+
+st.caption(
+    f"📊 Modèle : {MODEL_NAME} · {len(idx_to_sign)} signes · "
+    f"val acc {metadata.get('best_val_accuracy', 0):.0%}"
+)
+
+
+# ============================================================
+# SIDEBAR — paramètres en direct (remplace les raccourcis clavier)
+# ============================================================
+
+with st.sidebar:
+    st.header("⚙️ Paramètres de détection")
+
+    confidence_threshold = st.slider(
+        "Seuil de confiance modèle",
+        min_value=0.10, max_value=0.95, value=0.50, step=0.05,
+        help="En dessous, la prédiction est considérée comme du bruit.",
+    )
+    stability_frames = st.slider(
+        "Fenêtre de vote (frames)",
+        min_value=3, max_value=25, value=10, step=1,
+        help="Plus grand = plus stable mais plus lent à réagir.",
+    )
+    vote_ratio_threshold = st.slider(
+        "Ratio vote majoritaire",
+        min_value=0.50, max_value=1.0, value=0.70, step=0.05,
+        help="Proportion d'accord dans la fenêtre pour valider un signe.",
+    )
+    cooldown_frames = st.slider(
+        "Cooldown après validation (frames)",
+        min_value=5, max_value=60, value=25, step=5,
+        help="Évite de spammer le même signe.",
+    )
+    predict_every_n_frames = st.slider(
+        "Prédire toutes les N frames",
+        min_value=1, max_value=15, value=4, step=1,
+        help="Plus grand = moins de charge CPU.",
+    )
+    skip_inconnu = st.checkbox(
+        "Ignorer la classe 'inconnu'", value=True,
+        help="Si activé, 'inconnu' n'est pas ajouté à la séquence.",
+    )
+
+
+# ============================================================
+# MODE LIVE — Webcam + LSTM dans Streamlit
+# ============================================================
+
+st.markdown("### Mode Live — Webcam")
+
+col_btn1, col_btn2, col_btn3, col_btn4 = st.columns(4)
+
+with col_btn1:
+    if st.button("▶ Démarrer", type="primary", disabled=st.session_state.camera_active,
+                 use_container_width=True, key="start_cam"):
+        st.session_state.camera_active = True
+        st.rerun()
+
+with col_btn2:
+    if st.button("⏸ Arrêter", disabled=not st.session_state.camera_active,
+                 use_container_width=True, key="stop_cam"):
+        st.session_state.camera_active = False
+        st.rerun()
+
+with col_btn3:
+    if st.button("🔄 Reset séquence", use_container_width=True, key="reset_seq"):
+        st.session_state.detected_sequence = []
+        st.session_state.last_phrase = ""
+        st.session_state.last_audio = None
+        st.rerun()
+
+with col_btn4:
+    translate_disabled = not st.session_state.detected_sequence
+    if st.button("🎤 Traduire & vocaliser", type="secondary",
+                 disabled=translate_disabled, use_container_width=True, key="translate"):
+        with st.spinner("Traduction & synthèse vocale..."):
+            try:
+                response = requests.post(
+                    f"{API_URL}/predict/sentence/audio",
+                    json={"glosses": st.session_state.detected_sequence},
+                    timeout=60,
+                )
+                if response.status_code == 200:
+                    st.session_state.last_phrase = response.headers.get("x-phrase", "")
+                    st.session_state.last_audio = response.content
+                else:
+                    st.error(f"Erreur API : {response.status_code}")
+            except requests.exceptions.ConnectionError:
+                st.error("API injoignable. Vérifie qu'uvicorn tourne sur :8000.")
+            except requests.exceptions.Timeout:
+                st.error("L'API met trop de temps à répondre.")
+
+
+# Affichage phrase + audio (persiste après les reruns)
+if st.session_state.last_phrase:
+    st.success(f"**{st.session_state.last_phrase}**")
+if st.session_state.last_audio:
+    st.audio(st.session_state.last_audio, format="audio/mpeg", autoplay=True)
+
+
+# Affichage séquence
+seq_str = (
+    " → ".join(st.session_state.detected_sequence)
+    if st.session_state.detected_sequence
+    else "_(aucun signe pour l'instant — fais des signes face à la webcam)_"
+)
+st.markdown(f"**Séquence détectée** : {seq_str}")
+
+
+# Placeholders pour la vidéo et le statut live
+frame_placeholder = st.empty()
+status_placeholder = st.empty()
+
+
+# ============================================================
+# BOUCLE WEBCAM
+# ============================================================
+
+if st.session_state.camera_active:
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        st.error("❌ Impossible d'ouvrir la webcam. Vérifie les permissions macOS.")
+        st.session_state.camera_active = False
+    else:
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+        cap.set(cv2.CAP_PROP_FPS, 30)
+
+        sequence_buf = deque(maxlen=TARGET_FRAMES)
+        stability_history = deque(maxlen=25)
+        last_added_sign = None
+        cooldown_remaining = 0
+        current_pred_idx = -1
+        current_pred_conf = 0.0
+        current_top_3 = []
+        frame_count = 0
+        current_vote_ratio = 0.0
+        current_vote_label = "?"
+
+        try:
+            while st.session_state.camera_active:
+                ret, frame = cap.read()
+                if not ret:
+                    st.warning("Lecture webcam échouée. Tentative suivante...")
+                    continue
+
+                frame = cv2.flip(frame, 1)
+                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                results = holistic.process(rgb)
+
+                vector = landmarks_to_vector_no_pose(results)
+                sequence_buf.append(vector)
+
+                if cooldown_remaining > 0:
+                    cooldown_remaining -= 1
+
+                # === Prédiction LSTM ===
+                if (
+                    len(sequence_buf) == TARGET_FRAMES
+                    and frame_count % predict_every_n_frames == 0
+                ):
+                    sequence = np.array(sequence_buf, dtype=np.float32)
+                    batch = sequence[np.newaxis, ...]
+                    probs = model.predict(batch, verbose=0)[0]
+
+                    top_3_idx = np.argsort(probs)[::-1][:3]
+                    current_pred_idx = int(top_3_idx[0])
+                    current_pred_conf = float(probs[current_pred_idx])
+                    current_top_3 = [
+                        (idx_to_sign[int(i)], float(probs[i])) for i in top_3_idx
+                    ]
+
+                    # === Vote majoritaire ===
+                    if current_pred_conf >= confidence_threshold:
+                        stability_history.append(current_pred_idx)
+                    else:
+                        stability_history.append(-1)
+
+                    recent = list(stability_history)[-stability_frames:]
+                    if len(recent) == stability_frames:
+                        valid_candidates = [idx for idx in recent if idx != -1]
+                        if valid_candidates:
+                            most_common_idx = max(
+                                set(valid_candidates), key=valid_candidates.count
+                            )
+                            current_vote_ratio = (
+                                recent.count(most_common_idx) / stability_frames
+                            )
+                            current_vote_label = idx_to_sign[most_common_idx]
+
+                            if (
+                                current_vote_ratio >= vote_ratio_threshold
+                                and cooldown_remaining == 0
+                            ):
+                                validated_sign = current_vote_label
+                                if skip_inconnu and validated_sign == "inconnu":
+                                    stability_history.clear()
+                                    cooldown_remaining = 15
+                                elif validated_sign != last_added_sign:
+                                    st.session_state.detected_sequence.append(
+                                        validated_sign
+                                    )
+                                    last_added_sign = validated_sign
+                                    cooldown_remaining = cooldown_frames
+                                    stability_history.clear()
+                        else:
+                            current_vote_ratio = 0.0
+                            current_vote_label = "?"
+
+                # === Affichage frame avec landmarks ===
+                annotated_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                annotated_rgb = draw_landmarks(
+                    annotated_rgb, results, mp_holistic, mp_drawing
+                )
+                frame_placeholder.image(
+                    annotated_rgb, channels="RGB", use_container_width=True
+                )
+
+                # === Statut texte sous la vidéo ===
+                instant_label = (
+                    idx_to_sign[current_pred_idx] if current_pred_idx >= 0 else "?"
+                )
+                top3_str = " · ".join(
+                    f"{s} ({p:.0%})" for s, p in current_top_3
+                )
+                seq_now = (
+                    " → ".join(st.session_state.detected_sequence)
+                    if st.session_state.detected_sequence
+                    else "(vide)"
+                )
+                status_placeholder.markdown(
+                    f"**Instant** : `{instant_label}` ({current_pred_conf:.0%}) · "
+                    f"**Vote** : `{current_vote_label}` ({current_vote_ratio:.0%}) · "
+                    f"**Cooldown** : {cooldown_remaining}  \n"
+                    f"**Top 3** : {top3_str}  \n"
+                    f"**Séquence en cours** : {seq_now}"
+                )
+
+                frame_count += 1
+        finally:
+            cap.release()
+else:
+    frame_placeholder.info(
+        "👆 Clique sur **▶ Démarrer** pour activer la webcam. "
+        "Une fois démarré, fais tes signes face à la caméra — "
+        "les signes détectés s'ajoutent automatiquement à la séquence. "
+        "Puis clique **🎤 Traduire** pour entendre la phrase reconstituée."
+    )
+
+
+# ============================================================
+# MODE TEST — Simulation manuelle (backup démo)
+# ============================================================
+
+st.divider()
+
+with st.expander("🧪 Mode Test — Simulation manuelle (backup démo)"):
+    st.caption(
+        "Si la webcam déconne le jour J, utilise ce mode pour démontrer le "
+        "pipeline NLP + TTS avec des glosses choisis à la main."
+    )
+
+    glosses_input = st.multiselect(
+        label="Glosses (simulation)",
+        options=[
+            "AIDER", "AMELIORER", "AMI", "AUJOURD_HUI", "BONJOUR",
+            "COMMUNIQUER", "ENTENDANTS", "CONTENT", "JE_SUIS", "JE_VEUX",
+            "LANGUE_DES_SIGNES", "MERCI", "OUTIL_POINTAGE", "OUTIL",
+            "PRESENTER", "PROJET", "SOURD_POINTAGE", "SOURD",
+            "TRADUCTION", "VOCAL",
+        ],
+        default=["BONJOUR", "JE_SUIS", "CONTENT", "PRESENTER", "PROJET"],
+    )
+
+    if glosses_input:
+        st.caption(f"Séquence : {' → '.join(glosses_input)}")
+
+    if st.button("🎤 Traduire (simulation)", disabled=not glosses_input, key="test_translate"):
+        with st.spinner("Traduction en cours..."):
+            try:
+                response = requests.post(
+                    f"{API_URL}/predict/sentence/audio",
+                    json={"glosses": glosses_input},
+                    timeout=60,
+                )
+                if response.status_code == 200:
+                    phrase = response.headers.get("x-phrase", "")
+                    st.success(f"**{phrase}**")
+                    st.audio(response.content, format="audio/mpeg", autoplay=True)
+                else:
+                    st.error(f"Erreur API : {response.status_code}")
+            except requests.exceptions.ConnectionError:
+                st.error("API injoignable.")
+            except requests.exceptions.Timeout:
+                st.error("L'API met trop de temps à répondre.")

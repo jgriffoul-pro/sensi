@@ -1,113 +1,106 @@
+"""
+Landing page Sensi — 3 modules accessibles depuis la sidebar
+ou via les cartes ci-dessous.
+"""
+
 import streamlit as st
-import requests
-import os
-from dotenv import load_dotenv
 
-# Chargement des variables d'environnement
-load_dotenv()
-API_URL = os.getenv("API_URL", "http://localhost:8000/api/v1")
-
-# ============================================================
-# Configuration
-# ============================================================
 
 st.set_page_config(
-    page_title="Sensi — Traduction LSF",
-    page_icon="🤝",
-    layout="centered"
+    page_title="Sensi — Accessibilité",
+    page_icon="🤟",
+    layout="wide",
 )
 
-# ============================================================
-# Header
-# ============================================================
-
-st.title("🤝 Sensi")
-st.subheader("Transcription orale de la Langue des Signes Française")
-st.divider()
 
 # ============================================================
-# Mode 1 — Lecture depuis output/sequence.txt (LSTM live)
+# HEADER
 # ============================================================
 
-st.markdown("### 🎥 Mode Live — LSTM")
-st.caption("Lance `test_team_live(llm).py` dans un terminal, fais tes signes, puis clique Traduire.")
+st.title("🤟 Sensi")
+st.subheader("Plateforme d'accessibilité pour personnes sourdes et malentendantes")
 
-if st.button("🎤 Traduire la séquence détectée", type="primary"):
-    with st.spinner("Lecture de la séquence et traduction..."):
-        try:
-            response = requests.post(
-                f"{API_URL}/predict/from-sequence",
-                timeout=60
-            )
-
-            if response.status_code == 200:
-                error = response.headers.get("x-error", "")
-                if error:
-                    st.warning("Aucune séquence détectée. Lance le script LSTM et fais des signes.")
-                else:
-                    phrase = response.headers.get("x-phrase", "")
-                    glosses = response.headers.get("x-glosses", "")
-                    st.caption(f"Séquence : {' → '.join(glosses.split())}")
-                    st.success(f"**{phrase}**")
-                    st.audio(response.content, format="audio/mp3")
-            else:
-                st.error(f"Erreur API : {response.status_code}")
-
-        except requests.exceptions.ConnectionError:
-            st.error("Impossible de contacter l'API. Vérifie que uvicorn tourne sur le port 8000.")
-        except requests.exceptions.Timeout:
-            st.error("L'API met trop de temps à répondre.")
-
-st.divider()
-
-# ============================================================
-# Mode 2 — Simulation manuelle (test sans webcam)
-# ============================================================
-
-st.markdown("### 🧪 Mode Test — Simulation LSTM")
-st.caption("Sélectionne des glosses manuellement pour tester le pipeline NLP + TTS.")
-
-glosses_input = st.multiselect(
-    label="Glosses (simulation)",
-    options=[
-        "AIDER", "AMELIORER", "AMI", "AUJOURD_HUI", "BONJOUR",
-        "COMMUNIQUER", "ENTENDANTS", "CONTENT", "JE_SUIS", "JE_VEUX",
-        "LANGUE_DES_SIGNES", "MERCI", "OUTIL_POINTAGE", "OUTIL",
-        "PRESENTER", "PROJET", "SOURD_POINTAGE", "SOURD",
-        "TRADUCTION", "VOCAL"
-    ],
-    default=["BONJOUR", "JE_SUIS", "CONTENT", "PRESENTER", "PROJET"],
-    help="En production, ces glosses viennent automatiquement du modèle LSTM"
+st.markdown(
+    """
+Sensi propose trois modules pour rendre la communication accessible :
+**traduction de la langue des signes** (en direct ou sur vidéo)
+et **détection des sons d'alerte** du quotidien.
+"""
 )
 
-if glosses_input:
-    st.caption(f"Séquence : {' → '.join(glosses_input)}")
+st.divider()
 
-if st.button("🎤 Traduire (simulation)", disabled=not glosses_input):
-    with st.spinner("Traduction en cours..."):
-        try:
-            response = requests.post(
-                f"{API_URL}/predict/sentence/audio",
-                json={"glosses": glosses_input},
-                timeout=60
-            )
 
-            if response.status_code == 200:
-                phrase = response.headers.get("x-phrase", "")
-                st.success(f"**{phrase}**")
-                st.audio(response.content, format="audio/mp3")
-            else:
-                st.error(f"Erreur API : {response.status_code}")
+# ============================================================
+# 3 CARTES MODULES
+# ============================================================
 
-        except requests.exceptions.ConnectionError:
-            st.error("Impossible de contacter l'API. Vérifie que uvicorn tourne sur le port 8000.")
-        except requests.exceptions.Timeout:
-            st.error("L'API met trop de temps à répondre.")
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    with st.container(border=True):
+        st.markdown("### 🎥 SignLive")
+        st.markdown(
+            "**Traduction LSF en temps réel via webcam.**\n\n"
+            "MediaPipe Holistic → LSTM bidirectionnel → synthèse vocale.\n\n"
+            "Idéal pour une conversation en direct face caméra."
+        )
+        st.page_link(
+            "pages/1_🎥_SignLive.py",
+            label="Lancer SignLive",
+            icon="🎥",
+        )
+
+with col2:
+    with st.container(border=True):
+        st.markdown("### 📹 SignVideo")
+        st.markdown(
+            "**Traduction LSF à partir d'une vidéo pré-enregistrée.**\n\n"
+            "Vidéo de démo intégrée ou upload de ta propre vidéo.\n\n"
+            "Idéal pour analyser un message ou pour la démonstration."
+        )
+        st.page_link(
+            "pages/2_📹_SignVideo.py",
+            label="Lancer SignVideo",
+            icon="📹",
+        )
+
+with col3:
+    with st.container(border=True):
+        st.markdown("### 🔊 SoundWatch")
+        st.markdown(
+            "**Détection de sons d'alerte en temps réel.**\n\n"
+            "YAMNet (transfer learning) + MLP → alertes visuelles.\n\n"
+            "Sonnette, alarme, sirène, pleurs de bébé."
+        )
+        st.page_link(
+            "pages/3_🔊_SoundWatch.py",
+            label="Lancer SoundWatch",
+            icon="🔊",
+        )
+
 
 st.divider()
 
+
 # ============================================================
-# Footer
+# FOOTER
 # ============================================================
 
-st.caption("Projet Sensi — Le Wagon Data Science Batch 2288 Bootcamp 2026")
+with st.expander("ℹ️ À propos du projet"):
+    st.markdown(
+        """
+**Sensi** est le projet final du bootcamp Data Science Le Wagon (Batch 2288).
+
+**Stack technique :**
+- Détection des landmarks : MediaPipe Holistic (Google)
+- Traduction LSF : LSTM bidirectionnel entraîné sur dataset auto-constitué (18 signes × 4 personnes × 10 prises)
+- Détection sonore : YAMNet (AudioSet) + classifieur MLP sur ESC-50
+- Backend : FastAPI · Frontend : Streamlit · Inference : TensorFlow
+- LLM local (Ollama) pour la reformulation des séquences de signes en phrases naturelles
+
+**Modèles entraînés sur Mac M3 Max** — pyenv Python 3.10.6.
+"""
+    )
+
+st.caption("Sensi · Le Wagon Data Science Batch 2288 · 2026")
